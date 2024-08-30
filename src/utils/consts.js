@@ -11,7 +11,9 @@ const PointType = Object.freeze({
 });
 
 const MessageOnLoading = Object.freeze({
-  EMPTY_ROUTE: 'Click New Event to create your first point'
+  EMPTY_ROUTE: 'Click New Event to create your first point',
+  LOADING: 'Loading...',
+  FAILED: 'Failed to load latest route information'
 });
 
 export { MessageOnLoading, PointType };
