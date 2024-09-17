@@ -5,7 +5,7 @@ import PointListView from '@/view/point-view/point-list-view';
 import SortView from '@/view/sort-view';
 
 class RoutePresenter {
-  pointListComponent = new PointListView({});
+  #pointListComponent = new PointListView({});
 
   constructor({ contentContainer, routeModel }) {
     this.contentContainer = contentContainer;
@@ -16,15 +16,15 @@ class RoutePresenter {
     this.points = [...this.routeModel.points];
 
     render(new SortView({}), this.contentContainer);
-    render(this.pointListComponent, this.contentContainer);
+    render(this.#pointListComponent, this.contentContainer);
     render(new PointFormView({
       props: this.points[0],
       availableDestinations: this.routeModel.availableDestinations
     }),
-    this.pointListComponent.element);
+    this.#pointListComponent.element);
 
     for (let i = 1; i < this.points.length; i++) {
-      render(new PointItemView({ props: this.points[i] }), this.pointListComponent.element);
+      render(new PointItemView({ props: this.points[i] }), this.#pointListComponent.element);
     }
   }
 
