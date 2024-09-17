@@ -1,5 +1,5 @@
+import AbstractView from '@/framework/view/abstract-view';
 import { PointType, normalizePointDate } from '@/utils';
-import ComponentView from '@/view/component-view';
 import { createTemplate } from './createTemplate';
 
 const DEFAULT_POINT = {
@@ -16,17 +16,18 @@ const DEFAULT_POINT = {
   type: PointType.BUS
 };
 
-class PointFormView extends ComponentView {
-  _createTemplate = createTemplate;
-  _name = 'PointFormView';
+class PointFormView extends AbstractView {
+  #props;
+  #availableDestinations;
 
   constructor({ props = DEFAULT_POINT, availableDestinations }) {
-    super({ props });
-    this.availableDestinations = availableDestinations;
+    super();
+    this.#props = props;
+    this.#availableDestinations = availableDestinations;
   }
 
   get template() {
-    return this._createTemplate(this.props, this.availableDestinations);
+    return createTemplate(this.#props, this.#availableDestinations);
   }
 }
 

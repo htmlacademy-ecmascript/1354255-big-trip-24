@@ -1,9 +1,17 @@
-import ComponentView from '@/view/component-view';
+import AbstractView from '@/framework/view/abstract-view';
 import { createTemplate } from './create-template';
 
-class FilterView extends ComponentView {
-  _createTemplate = createTemplate;
-  _name = 'FilterView';
+class FilterView extends AbstractView {
+  #props;
+
+  constructor({ props }) {
+    super();
+    this.#props = props;
+  }
+
+  get template() {
+    return createTemplate(this.#props);
+  }
 }
 
 export default FilterView;
