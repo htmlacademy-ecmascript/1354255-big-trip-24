@@ -5,20 +5,28 @@ import PointListView from '@/view/point-view/point-list-view';
 import SortView from '@/view/sort-view';
 
 class RoutePresenter {
+  #points;
+  #contentContainer;
+  #routeModel;
+
   #pointListComponent = new PointListView();
 
   constructor({ contentContainer, routeModel }) {
-    this.contentContainer = contentContainer;
-    this.routeModel = routeModel;
+    this.#contentContainer = contentContainer;
+    this.#routeModel = routeModel;
   }
 
   init() {
-    this.points = [...this.routeModel.points];
+    this.#points = [...this.#routeModel.points];
 
-    render(new SortView(), this.contentContainer);
-    render(this.#pointListComponent, this.contentContainer);
+    this.#renderRoute();
+  }
 
-    this.points.forEach((point) => this.#renderPoint(point));
+  #renderRoute() {
+    render(new SortView(), this.#contentContainer);
+    render(this.#pointListComponent, this.#contentContainer);
+
+    this.#points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderPoint(point) {
@@ -39,8 +47,8 @@ class RoutePresenter {
     });
 
     const pointEditComponent = new PointFormView({
-      point: this.points[0],
-      availableDestinations: this.routeModel.availableDestinations,
+      point: this.#points[0],
+      availableDestinations: this.#routeModel.availableDestinations,
       onFormSubmit: () => {
         replaceFormToPoint();
         document.removeEventListener('keydown', escKeyDownHandler);
