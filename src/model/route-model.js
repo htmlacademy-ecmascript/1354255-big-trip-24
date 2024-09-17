@@ -2,15 +2,15 @@ import { mockDestinations } from '@/mocks/destinations';
 import { createMockPoints } from '@/mocks/points';
 
 class RouteModel {
-  _points = createMockPoints();
-  _availableDestinations = mockDestinations.map((destination) => destination.name);
+  #points = createMockPoints();
+  #availableDestinations = mockDestinations.map((destination) => destination.name);
 
   get points() {
-    return this._points;
+    return this.#points;
   }
 
   get availableDestinations() {
-    return this._availableDestinations;
+    return this.#availableDestinations;
   }
 }
 

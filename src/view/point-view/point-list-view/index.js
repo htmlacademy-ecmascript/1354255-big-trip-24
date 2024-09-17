@@ -1,9 +1,10 @@
-import ComponentView from '@/view/component-view';
+import AbstractView from '@/framework/view/abstract-view';
 import { createTemplate } from './create-template';
 
-class PointListView extends ComponentView {
-  _createTemplate = createTemplate;
-  _name = 'PointListView';
+class PointListView extends AbstractView {
+  get template() {
+    return createTemplate();
+  }
 }
 
 export default PointListView;

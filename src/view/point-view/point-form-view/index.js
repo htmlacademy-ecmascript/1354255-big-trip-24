@@ -1,5 +1,5 @@
+import AbstractView from '@/framework/view/abstract-view';
 import { PointType, normalizePointDate } from '@/utils';
-import ComponentView from '@/view/component-view';
 import { createTemplate } from './createTemplate';
 
 const DEFAULT_POINT = {
@@ -16,18 +16,41 @@ const DEFAULT_POINT = {
   type: PointType.BUS
 };
 
-class PointFormView extends ComponentView {
-  _createTemplate = createTemplate;
-  _name = 'PointFormView';
+class PointFormView extends AbstractView {
+  #point;
+  #availableDestinations;
+  #handleFormSubmit;
+  #handleCloseClick;
 
-  constructor({ props = DEFAULT_POINT, availableDestinations }) {
-    super({ props });
-    this.availableDestinations = availableDestinations;
+  constructor({
+    point = DEFAULT_POINT,
+    availableDestinations,
+    onFormSubmit,
+    onCloseClick
+  }) {
+    super();
+    this.#point = point;
+    this.#availableDestinations = availableDestinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCloseClick = onCloseClick;
+
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
   }
 
   get template() {
-    return this._createTemplate(this.props, this.availableDestinations);
+    return createTemplate(this.#point, this.#availableDestinations);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
+  };
 }
 
 export default PointFormView;
