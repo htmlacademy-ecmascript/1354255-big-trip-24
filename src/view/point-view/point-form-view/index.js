@@ -17,18 +17,40 @@ const DEFAULT_POINT = {
 };
 
 class PointFormView extends AbstractView {
-  #props;
+  #point;
   #availableDestinations;
+  #handleFormSubmit;
+  #handleCloseClick;
 
-  constructor({ props = DEFAULT_POINT, availableDestinations }) {
+  constructor({
+    point = DEFAULT_POINT,
+    availableDestinations,
+    onFormSubmit,
+    onCloseClick
+  }) {
     super();
-    this.#props = props;
+    this.#point = point;
     this.#availableDestinations = availableDestinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCloseClick = onCloseClick;
+
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
   }
 
   get template() {
-    return createTemplate(this.#props, this.#availableDestinations);
+    return createTemplate(this.#point, this.#availableDestinations);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #closeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCloseClick();
+  };
 }
 
 export default PointFormView;
