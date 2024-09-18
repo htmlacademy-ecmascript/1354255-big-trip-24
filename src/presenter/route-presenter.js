@@ -1,4 +1,6 @@
 import { render, replace } from '@/framework/render';
+import { MessageOnLoading } from '@/utils';
+import MessageView from '@/view/message-view';
 import PointFormView from '@/view/point-view/point-form-view';
 import PointItemView from '@/view/point-view/point-item-view';
 import PointListView from '@/view/point-view/point-list-view';
@@ -23,6 +25,11 @@ class RoutePresenter {
   }
 
   #renderRoute() {
+    if(this.#points.length === 0) {
+      render(new MessageView(MessageOnLoading.EMPTY_ROUTE), this.#contentContainer);
+      return;
+    }
+
     render(new SortView(), this.#contentContainer);
     render(this.#pointListComponent, this.#contentContainer);
 
