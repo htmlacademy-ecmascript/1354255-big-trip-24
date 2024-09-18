@@ -16,4 +16,11 @@ const MessageOnLoading = Object.freeze({
   FAILED: 'Failed to load latest route information'
 });
 
-export { MessageOnLoading, PointType };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
+export { FilterType, MessageOnLoading, PointType };

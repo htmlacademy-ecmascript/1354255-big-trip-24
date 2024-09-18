@@ -1,22 +1,22 @@
-import { capitalizeFirstLetter } from '@/utils';
+import { capitalizeFirstLetter, FilterType } from '@/utils';
 
-const FILTERS = ['everything', 'future', 'present', 'past'];
-
-const createTemplate = () => {
-  const filtersTemplate = FILTERS.map((filter, index) => {
-    const isChecked = index === 0 ? 'checked' : '';
+const createTemplate = (filters) => {
+  const filtersTemplate = filters.map((filter) => {
+    const isChecked = filter.type === FilterType.EVERYTHING ? 'checked' : '';
+    const isDisabled = filter.count === 0 ? 'disabled' : '';
 
     return (
       `<div class="trip-filters__filter">
         <input
-          id="filter-${filter}"
+          id="filter-${filter.type}"
           class="trip-filters__filter-input visually-hidden"
           type="radio"
           name="trip-filter"
-          value="${filter}"
-          ${isChecked}>
+          value="${filter.type}"
+          ${isChecked}
+          ${isDisabled}>
 
-        <label class="trip-filters__filter-label" for="filter-${filter}">${capitalizeFirstLetter(filter)}</label>
+        <label class="trip-filters__filter-label" for="filter-${filter.type}">${capitalizeFirstLetter(filter.type)}</label>
       </div>`
     );
   }).join('');

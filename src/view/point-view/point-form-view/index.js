@@ -1,11 +1,11 @@
 import AbstractView from '@/framework/view/abstract-view';
-import { PointType, normalizePointDate } from '@/utils';
+import { PointType, createDefaultPointDateFrom, createDefaultPointDateTo } from '@/utils';
 import { createTemplate } from './createTemplate';
 
 const DEFAULT_POINT = {
   price: 0,
-  dateFrom: normalizePointDate(Date.now()),
-  dateTo: normalizePointDate(Date.now()),
+  dateFrom: createDefaultPointDateFrom(),
+  dateTo: createDefaultPointDateTo(),
   destination: {
     description: '',
     name: '',

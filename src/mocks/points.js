@@ -1,4 +1,4 @@
-import { PointType, getRandomArrayElement } from '@/utils';
+import { PointType, createMockPointDate, getRandomArrayElement } from '@/utils';
 import { mockDestinations } from './destinations';
 import { mockOffers } from './offers';
 
@@ -10,8 +10,8 @@ const createMockPoint = (_el, index) => {
   return {
     id: index,
     price: 1100,
-    dateFrom: new Date(`2024-09-${index + 1}`),
-    dateTo: new Date(`2024-10-${index + 1}`),
+    dateFrom: createMockPointDate(index - 2),
+    dateTo: createMockPointDate(index - 1),
     destination: getRandomArrayElement(mockDestinations),
     isFavorite: Math.random() > 0.5,
     offers: mockOffers.find((offer) => offer.type === mockPointType)?.offers ?? [],
