@@ -1,10 +1,12 @@
-import { capitalizeFirstLetter, normalizePointDate } from '@/utils';
+import {
+  capitalizeFirstLetter,
+  formatPointDate,
+  getTimeDifference,
+  getTimeFromDate
+} from '@/utils';
 
-const createDateTemplate = (dateFrom) => {
-  const normalizedStartDate = normalizePointDate(dateFrom);
-
-  return `<time class="event__date" datetime="${dateFrom}">${normalizedStartDate}</time>`;
-};
+const createDateTemplate = (dateFrom) =>
+  `<time class="event__date" datetime="${dateFrom}">${formatPointDate(dateFrom)}</time>`;
 
 const createPlaceTemplate = (type, city) => (
   `<div class="event__type">
@@ -17,11 +19,11 @@ const createPlaceTemplate = (type, city) => (
 const createScheduleTemplate = (dateFrom, dateTo) => (
   `<div class="event__schedule">
     <p class="event__time">
-      <time class="event__start-time" datetime="${dateFrom}T10:30">10:30</time>
+      <time class="event__start-time" datetime="${dateFrom}">${getTimeFromDate(dateFrom)}</time>
         —
-      <time class="event__end-time" datetime="${dateTo}T11:00">11:00</time>
+      <time class="event__end-time" datetime="${dateTo}">${getTimeFromDate(dateTo)}</time>
     </p>
-    <p class="event__duration">30M</p>
+    <p class="event__duration">${getTimeDifference(dateFrom, dateTo)}</p>
   </div>`
 );
 
