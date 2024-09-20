@@ -49,7 +49,7 @@ class PointFormView extends AbstractView {
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCloseClick();
+    this.#handleCloseClick(this.#point);
   };
 }
 

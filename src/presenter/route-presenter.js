@@ -1,17 +1,20 @@
-import { render, replace } from '@/framework/render';
-import { MessageOnLoading } from '@/utils';
+import { render } from '@/framework/render';
+import PointPresenter from '@/presenter/point-presenter';
+import { MessageOnLoading, updateItem } from '@/utils';
 import MessageView from '@/view/message-view';
-import PointFormView from '@/view/point-view/point-form-view';
-import PointItemView from '@/view/point-view/point-item-view';
 import PointListView from '@/view/point-view/point-list-view';
 import SortView from '@/view/sort-view';
 
 class RoutePresenter {
-  #points;
-  #contentContainer;
-  #routeModel;
+  #points = [];
+  #contentContainer = null;
+  #routeModel = null;
 
   #pointListComponent = new PointListView();
+  #sortComponent = new SortView();
+  #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
+
+  #pointPresenters = new Map();
 
   constructor({ contentContainer, routeModel }) {
     this.#contentContainer = contentContainer;
@@ -26,56 +29,47 @@ class RoutePresenter {
 
   #renderRoute() {
     if(this.#points.length === 0) {
-      render(new MessageView(MessageOnLoading.EMPTY_ROUTE), this.#contentContainer);
+      this.#renderEmptyPointList();
       return;
     }
 
-    render(new SortView(), this.#contentContainer);
-    render(this.#pointListComponent, this.#contentContainer);
-
-    this.#points.forEach((point) => this.#renderPoint(point));
+    this.#renderSort();
+    this.#renderPointList();
   }
 
   #renderPoint(point) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointItemView({
-      point,
-      onEditClick: () => {
-        replacePointToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    const pointEditComponent = new PointFormView({
-      point: this.#points[0],
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListComponent.element,
       availableDestinations: this.#routeModel.availableDestinations,
-      onFormSubmit: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onCloseClick: () => {
-        replaceFormToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
 
-    function replacePointToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToPoint() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#pointListComponent.element);
+    pointPresenter.init(point);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #renderPointList() {
+    render(this.#pointListComponent, this.#contentContainer);
+    this.#points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#contentContainer);
+  }
+
+  #renderEmptyPointList() {
+    render(this.#emptyPointListComponent, this.#contentContainer);
+  }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
 }
 
 export default RoutePresenter;

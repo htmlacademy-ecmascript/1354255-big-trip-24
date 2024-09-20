@@ -1,4 +1,5 @@
 import { PointType, createMockPointDate, getRandomArrayElement } from '@/utils';
+import { nanoid } from 'nanoid';
 import { mockDestinations } from './destinations';
 import { mockOffers } from './offers';
 
@@ -8,7 +9,7 @@ const createMockPoint = (_el, index) => {
   const mockPointType = getRandomArrayElement(Object.values(PointType));
 
   return {
-    id: index,
+    id: nanoid(),
     price: 1100,
     dateFrom: createMockPointDate(index - 2),
     dateTo: createMockPointDate(index - 1),
