@@ -10,7 +10,7 @@ const createMockPoint = (_el, index) => {
 
   return {
     id: nanoid(),
-    price: 1100,
+    price: 100 * (index + 1),
     dateFrom: createMockPointDate(index - 2),
     dateTo: createMockPointDate(index - 1),
     destination: getRandomArrayElement(mockDestinations),
