@@ -3,11 +3,13 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 
+const MINUTES_IN_HOUR = 60;
+
 const DateTimeFormat = {
   DEFAULT: 'MMM DD',
   EDIT_POINT: 'YY/MM/DD HH:mm',
   TIME: 'HH:mm',
-  DURATION: 'H[H] m[M]'
+  DURATION: 'hH mM'
 };
 
 const now = dayjs();
@@ -24,7 +26,13 @@ const formatEditPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.E
 
 const getTimeFromDate = (date) => date ? dayjs(date).format(DateTimeFormat.TIME) : '';
 
-const getTimeDifference = (dateFrom, dateTo) => dayjs(dayjs(dateTo).diff(dayjs(dateFrom), 'minute')).format(DateTimeFormat.DURATION);
+const getTimeDifference = (dateFrom, dateTo) => {
+  const diffInMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
+  const hoursDiff = Math.floor(diffInMinutes / MINUTES_IN_HOUR);
+  const minutesDiff = diffInMinutes - hoursDiff * MINUTES_IN_HOUR;
+
+  return DateTimeFormat.DURATION.replace('h', hoursDiff).replace('m', minutesDiff);
+};
 
 const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'minute');
 

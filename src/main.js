@@ -1,7 +1,7 @@
+import { render } from '@/framework/render';
 import { generateFilters } from '@/mocks/filters';
 import RouteModel from '@/model/route-model';
 import RoutePresenter from '@/presenter/route-presenter';
-import { render } from '@/render';
 import FilterView from '@/view/filter-view';
 
 const filterContainerElement = document.querySelector('.trip-controls__filters');
