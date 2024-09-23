@@ -4,8 +4,11 @@ const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + strin
 
 const updateItem = (items, itemToUpdate) => items.map((item) => item.id === itemToUpdate.id ? itemToUpdate : item);
 
+const normalizeSortType = (inputValue) => inputValue.split('-')[1];
+
 export {
   capitalizeFirstLetter,
   getRandomArrayElement,
+  normalizeSortType,
   updateItem
 };

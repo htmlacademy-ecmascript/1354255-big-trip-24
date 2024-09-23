@@ -16,11 +16,25 @@ const MessageOnLoading = Object.freeze({
   FAILED: 'Failed to load latest route information'
 });
 
-const FilterType = {
+const FilterType = Object.freeze({
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past'
-};
+});
 
-export { FilterType, MessageOnLoading, PointType };
+const Sort = Object.freeze({
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer'
+});
+
+
+export {
+  FilterType,
+  MessageOnLoading,
+  PointType,
+  Sort
+};

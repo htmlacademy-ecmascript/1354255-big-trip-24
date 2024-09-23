@@ -1,12 +1,4 @@
-import { capitalizeFirstLetter } from '@/utils';
-
-const Sort = Object.freeze({
-  DAY: 'day',
-  EVENT: 'event',
-  TIME: 'time',
-  PRICE: 'price',
-  OFFER: 'offer'
-});
+import { capitalizeFirstLetter, Sort } from '@/utils';
 
 const SORT_DISABLED = [Sort.EVENT, Sort.OFFER];
 
@@ -16,7 +8,7 @@ const createTemplate = () => {
     const isDisabled = SORT_DISABLED.includes(sort) ? 'disabled' : '';
 
     return (
-      `<div class="trip-sort__item  trip-sort__item--${sort}">
+      `<div class="trip-sort__item trip-sort__item--${sort}">
         <input
           id="sort-${sort}"
           class="trip-sort__input  visually-hidden"

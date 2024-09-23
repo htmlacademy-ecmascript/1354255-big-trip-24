@@ -18,7 +18,12 @@ const createDefaultPointDateFrom = () => now.utc().format();
 
 const createDefaultPointDateTo = () => now.add(1, 'hour').utc().format();
 
-const createMockPointDate = (daysToAdd) => now.add(daysToAdd, 'day').utc().format();
+const createMockPointDate = (timeToAdd) => now
+  .add(timeToAdd, 'day')
+  .add(timeToAdd, 'hour')
+  .add(timeToAdd ** 2, 'minute')
+  .utc()
+  .format();
 
 const formatPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.DEFAULT) : '';
 
@@ -36,9 +41,34 @@ const getTimeDifference = (dateFrom, dateTo) => {
 
 const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'minute');
 
-const isPresentPoint = ({ dateTo }) => dayjs(dateTo) && dayjs().isAfter(dayjs(dateTo), 'milliseconds');
+const isPresentPoint = ({ dateTo }) => dayjs(dateTo) && dayjs().isAfter(dayjs(dateTo), 'millisecond');
 
-const isPastPoint = ({ dateFrom, dateTo }) => dateTo && (dayjs().isSame(dayjs(dateFrom), 'minute') || dayjs().isAfter(dateTo, 'minute'));
+const isPastPoint = ({ dateFrom, dateTo }) =>
+  dateTo && (dayjs().isSame(dayjs(dateFrom), 'minute') || dayjs().isAfter(dateTo, 'minute'));
+
+function getWeightForNullDate(dateA, dateB) {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+}
+
+const sortByTime = (pointA, pointB) => {
+  const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
+
+  return weight ?? dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
+};
+
+const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
 
 export {
   createDefaultPointDateFrom,
@@ -50,5 +80,7 @@ export {
   getTimeFromDate,
   isFuturePoint,
   isPastPoint,
-  isPresentPoint
+  isPresentPoint,
+  sortByPrice,
+  sortByTime
 };
