@@ -17,28 +17,26 @@ const DEFAULT_POINT = {
 };
 
 class PointFormView extends AbstractStatefulView {
-  #availableDestinations = [];
-
   #offersModel = null;
+  #destinationsModel = null;
 
   #handleFormSubmit = null;
   #handleCloseClick = null;
 
   constructor({
     point = DEFAULT_POINT,
-    availableDestinations,
     offersModel,
+    destinationsModel,
     onFormSubmit,
     onCloseClick,
   }) {
     super();
     this._setState(PointFormView.parsePointToState(point));
 
-    this.#availableDestinations = availableDestinations;
     this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
-
     this.#setEventListeners();
   }
 
@@ -47,19 +45,18 @@ class PointFormView extends AbstractStatefulView {
   }
 
   static parseStateToPoint(state) {
-    const point = { ...state };
-
-    return point;
+    return { ...state };
   }
 
   get template() {
-    return createTemplate(this._state, this.#availableDestinations);
+    return createTemplate(this._state, this.#destinationsModel.availableDestinations);
   }
 
   #setEventListeners() {
     this.element.addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeSelectHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationSelectHandler);
   }
 
   #formSubmitHandler = (evt) => {
@@ -82,6 +79,19 @@ class PointFormView extends AbstractStatefulView {
       ...this._state,
       type,
       offers,
+    });
+  };
+
+  #pointDestinationSelectHandler = (evt) => {
+    evt.preventDefault();
+
+    const name = evt.target.value;
+    const destination = this.#destinationsModel.getDestinationByName(name);
+
+    this.updateElement({
+      ...this._state,
+      name,
+      destination,
     });
   };
 

@@ -49,7 +49,7 @@ class PointPresenter {
 
     this.#pointEditComponent = new PointFormView({
       point: this.#point,
-      availableDestinations: this.#destinationsModel.availableDestinations,
+      destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
