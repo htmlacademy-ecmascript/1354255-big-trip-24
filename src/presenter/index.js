@@ -1,19 +1,24 @@
-import { generateFilters } from '@/mocks/filters';
+import DestinationsModel from '@/model/destinations-model';
+import OffersModel from '@/model/offers-model';
 import RouteModel from '@/model/route-model';
 import FiltersPresenter from '@/presenter/filters-presenter';
 import RoutePresenter from '@/presenter/route-presenter';
+import MockService from '@/service/mock-service';
 
-const mainContainerElement = document.querySelector('.trip-events');
+const mockService = new MockService();
 
-const routeModel = new RouteModel();
+const routeModel = new RouteModel(mockService);
+const destinationsModel = new DestinationsModel(mockService);
+const offersModel = new OffersModel(mockService);
+
 const routePresenter = new RoutePresenter({
-  contentContainer: mainContainerElement,
-  routeModel
+  routeModel,
+  destinationsModel,
+  offersModel
 });
 
-const filters = generateFilters(routeModel.points);
 const filtersPresenter = new FiltersPresenter({
-  filters
+  points: routeModel.points
 });
 
 class AppPresenter {

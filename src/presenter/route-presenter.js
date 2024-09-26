@@ -1,31 +1,43 @@
 import { render } from '@/framework/render';
+
 import PointPresenter from '@/presenter/point-presenter';
 import SortPresenter from '@/presenter/sort-presenter';
+import MessageView from '@/view/message-view';
+import PointListView from '@/view/point-view/point-list-view';
+
 import {
   MessageOnLoading,
   Sort,
   sortPointsByType,
   updateItem
 } from '@/utils';
-import MessageView from '@/view/message-view';
-import PointListView from '@/view/point-view/point-list-view';
 
 class RoutePresenter {
   #points = [];
   #pointsRaw = [];
-  #contentContainer = null;
-  #routeModel = null;
   #currentSort = Sort.DAY;
 
-  #sortPresenter = null;
+  #routeModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
+
+  #contentContainer = null;
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
 
+  #sortPresenter = null;
   #pointPresenters = new Map();
 
-  constructor({ contentContainer, routeModel }) {
-    this.#contentContainer = contentContainer;
+  constructor({
+    routeModel,
+    destinationsModel,
+    offersModel
+  }) {
+    this.#contentContainer = document.querySelector('.trip-events');
+
     this.#routeModel = routeModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init() {
@@ -48,7 +60,8 @@ class RoutePresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
-      availableDestinations: this.#routeModel.availableDestinations,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });

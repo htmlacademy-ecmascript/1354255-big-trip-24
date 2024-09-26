@@ -7,32 +7,36 @@ const Mode = {
   EDITING: 'editing',
 };
 
-class RoutePresenter {
+class PointPresenter {
+  #point = null;
+  #mode = Mode.DEFAULT;
+
+  #destinationsModel = null;
+  #offersModel = null;
+
   #pointListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
-
-  #point = null;
-  #mode = Mode.DEFAULT;
-  #availableDestinations = [];
 
   #handleDataChange = null;
   #handleModeChange = null;
 
   constructor({
     pointListContainer,
-    availableDestinations,
+    destinationsModel,
+    offersModel,
     onDataChange,
     onModeChange
   }) {
     this.#pointListContainer = pointListContainer;
-    this.#availableDestinations = availableDestinations;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
   init(point) {
-    this.#point = point;
+    this.#point = this.#normalizePoint(point);
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -45,7 +49,7 @@ class RoutePresenter {
 
     this.#pointEditComponent = new PointFormView({
       point: this.#point,
-      availableDestinations: this.#availableDestinations,
+      availableDestinations: this.#destinationsModel.availableDestinations,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
     });
@@ -118,6 +122,16 @@ class RoutePresenter {
   #handleFavoriteClick = () => {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
   };
+
+  #normalizePoint(point) {
+    const offers = point.offers.map((offerId) => this.#offersModel.getOfferById(offerId));
+
+    return {
+      ...point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers
+    };
+  }
 }
 
-export default RoutePresenter;
+export default PointPresenter;
