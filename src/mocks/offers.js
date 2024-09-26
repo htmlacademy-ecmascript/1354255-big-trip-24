@@ -1,4 +1,6 @@
-const mockOffers = [
+import { PointType } from '@/utils';
+
+const OFFERS = [
   {
     id: '1',
     title: 'Upgrade to a business class',
@@ -31,4 +33,19 @@ const mockOffers = [
   },
 ];
 
-export { mockOffers };
+const mockOffers = [
+  {
+    type: PointType.TAXI,
+    offers: [OFFERS[0].id]
+  },
+  {
+    type: PointType.BUS,
+    offers: [OFFERS[1].id, OFFERS[3].id]
+  },
+  {
+    type: PointType.TRAIN,
+    offers: [OFFERS[2].id, OFFERS[3].id, OFFERS[4].id]
+  }
+];
+
+export { mockOffers, OFFERS };

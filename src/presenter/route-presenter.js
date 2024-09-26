@@ -41,8 +41,8 @@ class RoutePresenter {
   }
 
   init() {
-    this.#points = [...this.#routeModel.points];
-    this.#pointsRaw = [...this.#routeModel.points];
+    this.#points = this.#normalizePoints(this.#routeModel.points);
+    this.#pointsRaw = this.#normalizePoints(this.#routeModel.points);
 
     this.#renderRoute();
   }
@@ -116,6 +116,14 @@ class RoutePresenter {
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  #normalizePoints(points) {
+    return points.map((point) => ({
+      ...point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers: point.offers.map((offerId) => this.#offersModel.getOfferById(offerId))
+    }));
   }
 }
 

@@ -1,6 +1,6 @@
 import { createMockPoint } from '@/mocks/create-mocks';
 import { mockDestinations } from '@/mocks/destinations';
-import { mockOffers } from '@/mocks/offers';
+import { mockOffers, OFFERS } from '@/mocks/offers';
 
 class MockService {
   #POINTS_LENGTH = 4;
@@ -38,6 +38,10 @@ class MockService {
 
   #generateOffers() {
     return mockOffers;
+  }
+
+  getOfferById(id) {
+    return OFFERS.find((offer) => offer.id === id);
   }
 }
 

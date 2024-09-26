@@ -24,13 +24,8 @@ const createMockPointDate = (timeToAdd) => dayjs()
 
 const createMockDestination = () => getRandomArrayElement(mockDestinations).id;
 
-const createMockOffers = () =>
-  Array.from(
-    new Set(Array.from(
-      { length: getRandomNumberInRange(allPointTypes.length) },
-      () => getRandomArrayElement(mockOffers).id
-    ))
-  );
+const createMockOffers = (mockPointType) =>
+  mockOffers.find((offer) => offer.type === mockPointType)?.offers || [];
 
 const createMockPoint = (_el, index) => {
   const mockPointType = getRandomArrayElement(allPointTypes);
@@ -42,7 +37,7 @@ const createMockPoint = (_el, index) => {
     dateTo: createMockPointDate(index - 1),
     destination: createMockDestination(),
     isFavorite: Math.random() > 0.5,
-    offers: createMockOffers(),
+    offers: createMockOffers(mockPointType),
     type: mockPointType
   };
 };

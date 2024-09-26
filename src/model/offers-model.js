@@ -1,12 +1,22 @@
 class OffersModel {
-  #offers = [];
+  #service = null;
 
   constructor(service) {
-    this.#offers = service.offers;
+    this.#service = service;
   }
 
   getOfferById(id) {
-    return this.#offers.find((offer) => offer.id === id);
+    return this.#service.getOfferById(id);
+  }
+
+  getOffersByPointType(type) {
+    const existedOffer = this.#service.offers.find((offer) => offer.type === type);
+
+    if (!existedOffer) {
+      return [];
+    }
+
+    return existedOffer.offers.map((offerId) => this.getOfferById(offerId));
   }
 }
 

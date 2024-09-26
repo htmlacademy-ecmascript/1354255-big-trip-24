@@ -36,7 +36,7 @@ class PointPresenter {
   }
 
   init(point) {
-    this.#point = this.#normalizePoint(point);
+    this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -50,6 +50,7 @@ class PointPresenter {
     this.#pointEditComponent = new PointFormView({
       point: this.#point,
       availableDestinations: this.#destinationsModel.availableDestinations,
+      offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
     });
@@ -122,16 +123,6 @@ class PointPresenter {
   #handleFavoriteClick = () => {
     this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
   };
-
-  #normalizePoint(point) {
-    const offers = point.offers.map((offerId) => this.#offersModel.getOfferById(offerId));
-
-    return {
-      ...point,
-      destination: this.#destinationsModel.getDestinationById(point.destination),
-      offers
-    };
-  }
 }
 
 export default PointPresenter;
