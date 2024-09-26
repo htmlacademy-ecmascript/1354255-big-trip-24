@@ -85,6 +85,10 @@ class PointFormView extends AbstractStatefulView {
   #pointDestinationSelectHandler = (evt) => {
     evt.preventDefault();
 
+    if (!this.#destinationsModel.isValidName(evt.target.value)) {
+      return;
+    }
+
     const name = evt.target.value;
     const destination = this.#destinationsModel.getDestinationByName(name);
 
@@ -97,6 +101,12 @@ class PointFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.#setEventListeners();
+  }
+
+  reset(point) {
+    this.updateElement(
+      PointFormView.parsePointToState(point),
+    );
   }
 }
 

@@ -9,6 +9,10 @@ class DestinationsModel {
     return this.#destinations.map((destination) => destination.name);
   }
 
+  isValidName(name) {
+    return !!this.availableDestinations.includes(name);
+  }
+
   getDestinationById(id) {
     return this.#destinations.find((destination) => destination.id === id);
   }
