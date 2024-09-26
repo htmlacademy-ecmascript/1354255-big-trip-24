@@ -1,3 +1,4 @@
+import { Sort } from '@/utils';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
@@ -70,6 +71,17 @@ const sortByTime = (pointA, pointB) => {
 
 const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
 
+const sortPointsByType = (points, pointsRaw, sortType) => {
+  switch (sortType) {
+    case Sort.TIME:
+      return points.toSorted(sortByTime);
+    case Sort.PRICE:
+      return points.toSorted(sortByPrice);
+    default:
+      return [...pointsRaw];
+  }
+};
+
 export {
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
@@ -82,5 +94,6 @@ export {
   isPastPoint,
   isPresentPoint,
   sortByPrice,
-  sortByTime
+  sortByTime,
+  sortPointsByType
 };

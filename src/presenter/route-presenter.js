@@ -1,9 +1,14 @@
 import { render } from '@/framework/render';
 import PointPresenter from '@/presenter/point-presenter';
-import { MessageOnLoading, Sort, sortByPrice, sortByTime, updateItem } from '@/utils';
+import SortPresenter from '@/presenter/sort-presenter';
+import {
+  MessageOnLoading,
+  Sort,
+  sortPointsByType,
+  updateItem
+} from '@/utils';
 import MessageView from '@/view/message-view';
 import PointListView from '@/view/point-view/point-list-view';
-import SortView from '@/view/sort-view';
 
 class RoutePresenter {
   #points = [];
@@ -12,7 +17,7 @@ class RoutePresenter {
   #routeModel = null;
   #currentSort = Sort.DAY;
 
-  #sortComponent = null;
+  #sortPresenter = null;
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
 
@@ -58,11 +63,12 @@ class RoutePresenter {
   }
 
   #renderSort() {
-    this.#sortComponent = new SortView({
+    this.#sortPresenter = new SortPresenter({
+      container: this.#contentContainer,
       onSortTypeChange: this.#handleSortTypeChange
     });
 
-    render(this.#sortComponent, this.#contentContainer);
+    this.#sortPresenter.init();
   }
 
   #renderEmptyPointList() {
@@ -90,17 +96,7 @@ class RoutePresenter {
   };
 
   #sortPoints(sortType) {
-    switch (sortType) {
-      case Sort.TIME:
-        this.#points.sort(sortByTime);
-        break;
-      case Sort.PRICE:
-        this.#points.sort(sortByPrice);
-        break;
-      default:
-        this.#points = [...this.#pointsRaw];
-    }
-
+    this.#points = sortPointsByType(this.#points, this.#pointsRaw, sortType);
     this.#currentSort = sortType;
   }
 

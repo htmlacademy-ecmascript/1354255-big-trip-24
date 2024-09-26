@@ -16,8 +16,8 @@ class RoutePresenter {
   #mode = Mode.DEFAULT;
   #availableDestinations = [];
 
-  #handleDataChange = () => {};
-  #handleModeChange = () => {};
+  #handleDataChange = null;
+  #handleModeChange = null;
 
   constructor({
     pointListContainer,

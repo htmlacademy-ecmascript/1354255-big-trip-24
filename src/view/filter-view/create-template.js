@@ -13,6 +13,7 @@ const createTemplate = (filters) => {
           type="radio"
           name="trip-filter"
           value="${filter.type}"
+          data-type="${filter.type}"
           ${isChecked}
           ${isDisabled}>
 
