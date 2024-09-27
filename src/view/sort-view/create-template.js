@@ -14,6 +14,7 @@ const createTemplate = () => {
           class="trip-sort__input  visually-hidden"
           type="radio" name="trip-sort"
           value="sort-${sort}"
+          data-type="${sort}"
           ${isChecked}
           ${isDisabled}>
         <label class="trip-sort__btn" for="sort-${sort}">${capitalizeFirstLetter(sort)}</label>

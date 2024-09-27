@@ -1,4 +1,4 @@
 export * from './common';
 export * from './consts';
-export * from './filter';
+export * from './filters';
 export * from './points';

@@ -12,4 +12,13 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter((point) => isPastPoint(point)),
 };
 
-export { filter };
+const generateFilters = (points) => Object.entries(filter)
+  .map(([filterType, filterValidator]) => ({
+    type: filterType,
+    count: filterValidator(points).length
+  }));
+
+export {
+  filter,
+  generateFilters
+};

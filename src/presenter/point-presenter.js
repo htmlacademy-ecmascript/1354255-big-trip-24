@@ -7,26 +7,30 @@ const Mode = {
   EDITING: 'editing',
 };
 
-class RoutePresenter {
+class PointPresenter {
+  #point = null;
+  #mode = Mode.DEFAULT;
+
+  #destinationsModel = null;
+  #offersModel = null;
+
   #pointListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
 
-  #point = null;
-  #mode = Mode.DEFAULT;
-  #availableDestinations = [];
-
-  #handleDataChange = () => {};
-  #handleModeChange = () => {};
+  #handleDataChange = null;
+  #handleModeChange = null;
 
   constructor({
     pointListContainer,
-    availableDestinations,
+    destinationsModel,
+    offersModel,
     onDataChange,
     onModeChange
   }) {
     this.#pointListContainer = pointListContainer;
-    this.#availableDestinations = availableDestinations;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
@@ -45,7 +49,8 @@ class RoutePresenter {
 
     this.#pointEditComponent = new PointFormView({
       point: this.#point,
-      availableDestinations: this.#availableDestinations,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
     });
@@ -69,6 +74,7 @@ class RoutePresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -81,6 +87,7 @@ class RoutePresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -120,4 +127,4 @@ class RoutePresenter {
   };
 }
 
-export default RoutePresenter;
+export default PointPresenter;

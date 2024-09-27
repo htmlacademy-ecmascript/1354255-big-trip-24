@@ -1,16 +1,9 @@
-import AbstractView from '@/framework/view/abstract-view';
+import ControlsView from '@/view/controls-view';
 import { createTemplate } from './create-template';
 
-class FilterView extends AbstractView {
-  #filters;
-
-  constructor(filters) {
-    super();
-    this.#filters = filters;
-  }
-
+class FilterView extends ControlsView {
   get template() {
-    return createTemplate(this.#filters);
+    return createTemplate(this._items);
   }
 }
 

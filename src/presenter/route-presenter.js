@@ -1,31 +1,48 @@
 import { render } from '@/framework/render';
+
 import PointPresenter from '@/presenter/point-presenter';
-import { MessageOnLoading, Sort, sortByPrice, sortByTime, updateItem } from '@/utils';
+import SortPresenter from '@/presenter/sort-presenter';
 import MessageView from '@/view/message-view';
 import PointListView from '@/view/point-view/point-list-view';
-import SortView from '@/view/sort-view';
+
+import {
+  MessageOnLoading,
+  Sort,
+  sortPointsByType,
+  updateItem
+} from '@/utils';
 
 class RoutePresenter {
   #points = [];
   #pointsRaw = [];
-  #contentContainer = null;
-  #routeModel = null;
   #currentSort = Sort.DAY;
 
-  #sortComponent = null;
+  #routeModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
+
+  #contentContainer = null;
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
 
+  #sortPresenter = null;
   #pointPresenters = new Map();
 
-  constructor({ contentContainer, routeModel }) {
-    this.#contentContainer = contentContainer;
+  constructor({
+    routeModel,
+    destinationsModel,
+    offersModel
+  }) {
+    this.#contentContainer = document.querySelector('.trip-events');
+
     this.#routeModel = routeModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init() {
-    this.#points = [...this.#routeModel.points];
-    this.#pointsRaw = [...this.#routeModel.points];
+    this.#points = this.#normalizePoints(this.#routeModel.points);
+    this.#pointsRaw = this.#normalizePoints(this.#routeModel.points);
 
     this.#renderRoute();
   }
@@ -43,7 +60,8 @@ class RoutePresenter {
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListComponent.element,
-      availableDestinations: this.#routeModel.availableDestinations,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
@@ -58,11 +76,12 @@ class RoutePresenter {
   }
 
   #renderSort() {
-    this.#sortComponent = new SortView({
+    this.#sortPresenter = new SortPresenter({
+      container: this.#contentContainer,
       onSortTypeChange: this.#handleSortTypeChange
     });
 
-    render(this.#sortComponent, this.#contentContainer);
+    this.#sortPresenter.init();
   }
 
   #renderEmptyPointList() {
@@ -90,23 +109,21 @@ class RoutePresenter {
   };
 
   #sortPoints(sortType) {
-    switch (sortType) {
-      case Sort.TIME:
-        this.#points.sort(sortByTime);
-        break;
-      case Sort.PRICE:
-        this.#points.sort(sortByPrice);
-        break;
-      default:
-        this.#points = [...this.#pointsRaw];
-    }
-
+    this.#points = sortPointsByType(this.#points, this.#pointsRaw, sortType);
     this.#currentSort = sortType;
   }
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  #normalizePoints(points) {
+    return points.map((point) => ({
+      ...point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers: point.offers.map((offerId) => this.#offersModel.getOfferById(offerId))
+    }));
   }
 }
 
