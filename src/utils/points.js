@@ -6,12 +6,12 @@ import { Sort } from '@/utils';
 dayjs.extend(utc);
 
 const MINUTES_IN_HOUR = 60;
+const HOURS_IN_DAY = 24;
 
 const DateTimeFormat = {
   DEFAULT: 'MMM DD',
   EDIT_POINT: 'YY/MM/DD HH:mm',
-  TIME: 'HH:mm',
-  DURATION: 'hH mM'
+  TIME: 'HH:mm'
 };
 
 const now = dayjs();
@@ -33,12 +33,27 @@ const formatEditPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.E
 
 const getTimeFromDate = (date) => date ? dayjs(date).format(DateTimeFormat.TIME) : '';
 
+const fillWithZero = (number) => String(number).length === 1 ? `0${number}` : `${number}`;
+
 const getTimeDifference = (dateFrom, dateTo) => {
   const diffInMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
-  const hoursDiff = Math.floor(diffInMinutes / MINUTES_IN_HOUR);
-  const minutesDiff = diffInMinutes - hoursDiff * MINUTES_IN_HOUR;
+  let minutesLeft = diffInMinutes;
 
-  return DateTimeFormat.DURATION.replace('h', hoursDiff).replace('m', minutesDiff);
+  const dayDiff = Math.floor(diffInMinutes / HOURS_IN_DAY / MINUTES_IN_HOUR);
+  minutesLeft = diffInMinutes - dayDiff * HOURS_IN_DAY * MINUTES_IN_HOUR;
+
+  const hoursDiff = Math.floor(minutesLeft / MINUTES_IN_HOUR);
+  minutesLeft = hoursDiff * MINUTES_IN_HOUR;
+
+  const minutesDiff = minutesLeft;
+
+  if (dayDiff) {
+    return `${fillWithZero(dayDiff)}D ${fillWithZero(hoursDiff)}H ${fillWithZero(minutesDiff)}M`;
+  } else if (hoursDiff) {
+    return `${fillWithZero(hoursDiff)}H ${fillWithZero(minutesDiff)}M`;
+  } else {
+    return `${fillWithZero(minutesDiff)}M`;
+  }
 };
 
 const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'minute');
