@@ -1,6 +1,6 @@
 import AbstractStatefulView from '@/framework/view/abstract-stateful-view';
 import { PointType, createDefaultPointDateFrom, createDefaultPointDateTo } from '@/utils';
-import { createTemplate } from './createTemplate';
+import { createTemplate } from './create-template';
 
 const DEFAULT_POINT = {
   price: 0,
@@ -41,11 +41,18 @@ class PointFormView extends AbstractStatefulView {
   }
 
   static parsePointToState(point) {
-    return { ...point };
+    return {
+      ...point,
+      selectedType: point.type,
+    };
   }
 
   static parseStateToPoint(state) {
-    return { ...state };
+    const point = { ...state };
+
+    delete point.selectedType;
+
+    return point;
   }
 
   get template() {
@@ -77,6 +84,7 @@ class PointFormView extends AbstractStatefulView {
 
     this.updateElement({
       ...this._state,
+      selectedType: type,
       type,
       offers,
     });
