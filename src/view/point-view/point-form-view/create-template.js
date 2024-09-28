@@ -2,13 +2,25 @@ import { PointType, capitalizeFirstLetter, formatEditPointDate } from '@/utils';
 
 const availablePointTypes = Object.values(PointType);
 
-const createEventTypeTemplate = (type) => {
-  const pointsList = availablePointTypes.map((point) => (
-    `<div class="event__type-item">
-      <input id="event-type-${point}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${point}">
-      <label class="event__type-label  event__type-label--${point}" for="event-type-${point}-1">${capitalizeFirstLetter(point)}</label>
-    </div>`
-  )).join('');
+const createEventTypeTemplate = (type, selectedType) => {
+  const pointsList = availablePointTypes.map((point) => {
+    const isChecked = point === selectedType ? 'checked' : '';
+
+    return (
+      `<div class="event__type-item">
+        <input
+          id="event-type-${point}-1"
+          class="event__type-input
+          visually-hidden"
+          type="radio"
+          name="event-type"
+          value="${point}"
+          ${isChecked}
+          >
+        <label class="event__type-label  event__type-label--${point}" for="event-type-${point}-1">${capitalizeFirstLetter(point)}</label>
+      </div>`
+    );
+  }).join('');
 
   return (
     `<div class="event__type-wrapper">
@@ -81,9 +93,17 @@ const createEventPriceTemplate = (price) => (
   </div>`
 );
 
-const createHeaderTemplate = ({ price, dateFrom, dateTo, type, place, availableDestinations }) => (
+const createHeaderTemplate = ({
+  price,
+  dateFrom,
+  dateTo,
+  type,
+  place,
+  availableDestinations,
+  selectedType
+}) => (
   `<header class="event__header">
-    ${createEventTypeTemplate(type)}
+    ${createEventTypeTemplate(type, selectedType)}
     ${createEventDestinationTemplate(type, place, availableDestinations)}
     ${createEventTimeTemplate(dateFrom, dateTo)}
     ${createEventPriceTemplate(price)}
@@ -149,7 +169,7 @@ const createDestinationSectionTemplate = (description, photos) => (
   </section>`
 );
 
-const createTemplate = (point, availableDestinations) => {
+const createTemplate = (state, availableDestinations) => {
   const {
     destination,
     offers,
@@ -157,7 +177,8 @@ const createTemplate = (point, availableDestinations) => {
     dateFrom,
     dateTo,
     type,
-  } = point;
+    selectedType
+  } = state;
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -167,7 +188,8 @@ const createTemplate = (point, availableDestinations) => {
       dateTo,
       type,
       availableDestinations,
-      place: destination.name
+      place: destination.name,
+      selectedType
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}
