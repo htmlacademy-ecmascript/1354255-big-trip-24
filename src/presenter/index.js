@@ -1,4 +1,5 @@
 import DestinationsModel from '@/model/destinations-model';
+import FiltersModel from '@/model/filters-model';
 import OffersModel from '@/model/offers-model';
 import RouteModel from '@/model/route-model';
 import FiltersPresenter from '@/presenter/filters-presenter';
@@ -10,15 +11,18 @@ const mockService = new MockService();
 const routeModel = new RouteModel(mockService);
 const destinationsModel = new DestinationsModel(mockService);
 const offersModel = new OffersModel(mockService);
+const filtersModel = new FiltersModel();
 
 const routePresenter = new RoutePresenter({
   routeModel,
   destinationsModel,
-  offersModel
+  offersModel,
+  filtersModel
 });
 
 const filtersPresenter = new FiltersPresenter({
-  points: routeModel.points
+  filtersModel,
+  routeModel
 });
 
 class AppPresenter {

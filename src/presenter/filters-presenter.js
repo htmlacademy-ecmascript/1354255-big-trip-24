@@ -1,26 +1,61 @@
-import { render } from '@/framework/render';
+import { remove, render, replace } from '@/framework/render';
 
+import { FilterType, UpdateType, filter } from '@/utils';
 import FilterView from '@/view/filter-view';
 
-import { generateFilters } from '@/utils';
-
 class FiltersPresenter {
-  #points = [];
+  #routeModel = null;
+  #filtersModel = null;
 
-  constructor({ points }) {
-    this.#points = points;
+  #filterComponent = null;
+
+  constructor({ routeModel, filtersModel }) {
+    this.#routeModel = routeModel;
+    this.#filtersModel = filtersModel;
+
+
+    this.#filtersModel.addObserver(this.#handleModelEvent);
+    this.#routeModel.addObserver(this.#handleModelEvent);
+  }
+
+  get filters() {
+    return Object.values(FilterType).map((type) => ({
+      type,
+      isChecked: type === this.#filtersModel.filter,
+      isDisabled: !filter[type](this.#routeModel.points).length
+    }));
   }
 
   init() {
     const filterContainerElement = document.querySelector('.trip-controls__filters');
-    const filters = this.#generateFilters();
 
-    render(new FilterView({ items: filters }), filterContainerElement);
+    const prevFilterComponent = this.#filterComponent;
+
+    this.#filterComponent = new FilterView({
+      items: this.filters,
+      onItemChange: this.#handleFilterTypeChange
+    });
+
+    if (prevFilterComponent === null) {
+      render(this.#filterComponent, filterContainerElement);
+      return;
+    }
+
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   }
 
-  #generateFilters() {
-    return generateFilters(this.#points);
-  }
+  #handleFilterTypeChange = (filterType) => {
+    if (this.#filtersModel.filter === filterType) {
+      return;
+    }
+
+    this.#filtersModel.setFilter(UpdateType.MAJOR, filterType);
+  };
+
+  #handleModelEvent = () => {
+    this.init();
+  };
 }
 
 export default FiltersPresenter;

@@ -6,6 +6,9 @@ import MessageView from '@/view/message-view';
 import PointListView from '@/view/point-view/point-list-view';
 
 import {
+  EmptyFilterMessage,
+  filter,
+  FilterType,
   MessageOnLoading,
   Sort,
   sortPointsByType,
@@ -15,10 +18,12 @@ import {
 
 class RoutePresenter {
   #currentSort = Sort.DAY;
+  #currentFilter = FilterType.EVERYTHING;
 
   #routeModel = null;
   #destinationsModel = null;
   #offersModel = null;
+  #filtersModel = null;
 
   #contentContainer = null;
   #pointListComponent = new PointListView();
@@ -30,21 +35,27 @@ class RoutePresenter {
   constructor({
     routeModel,
     destinationsModel,
-    offersModel
+    offersModel,
+    filtersModel
   }) {
     this.#contentContainer = document.querySelector('.trip-events');
 
     this.#routeModel = routeModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+    this.#filtersModel = filtersModel;
 
     this.#routeModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
     const points = this.#normalizePoints(this.#routeModel.points);
+    this.#currentFilter = this.#filtersModel.filter;
 
-    return sortPointsByType(points, this.#currentSort);
+    const filteredPoints = filter[this.#currentFilter](points);
+
+    return sortPointsByType(filteredPoints, this.#currentSort);
   }
 
   init() {
@@ -57,7 +68,7 @@ class RoutePresenter {
       return;
     }
 
-    this.#renderSort(this.#currentSort);
+    this.#renderSort();
     this.#renderPointList();
   }
 
@@ -90,6 +101,7 @@ class RoutePresenter {
   }
 
   #renderEmptyPointList() {
+    this.#emptyPointListComponent = new MessageView(EmptyFilterMessage[this.#currentFilter]);
     render(this.#emptyPointListComponent, this.#contentContainer);
   }
 
@@ -161,7 +173,7 @@ class RoutePresenter {
     remove(this.#emptyPointListComponent);
 
     if (resetSortType) {
-      this.#currentSort = Sort.DEFAULT;
+      this.#currentSort = Sort.DAY;
     }
   }
 }
