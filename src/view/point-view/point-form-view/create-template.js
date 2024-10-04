@@ -1,4 +1,9 @@
-import { PointType, capitalizeFirstLetter, formatEditPointDate } from '@/utils';
+import {
+  PointType,
+  capitalizeFirstLetter,
+  formatEditPointDate,
+  pointMode
+} from '@/utils';
 
 const availablePointTypes = Object.values(PointType);
 
@@ -55,7 +60,7 @@ const createEventDestinationTemplate = (type, place, availableDestinations) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${place}"
+        value="${place || ''}"
         list="destination-list-1">
       <datalist id="destination-list-1">
         ${destinationsList}
@@ -100,21 +105,31 @@ const createHeaderTemplate = ({
   type,
   place,
   availableDestinations,
-  selectedType
-}) => (
-  `<header class="event__header">
-    ${createEventTypeTemplate(type, selectedType)}
-    ${createEventDestinationTemplate(type, place, availableDestinations)}
-    ${createEventTimeTemplate(dateFrom, dateTo)}
-    ${createEventPriceTemplate(price)}
+  selectedType,
+  mode
+}) => {
+  const isEditing = mode === pointMode.EDIT;
+  const resetButtonText = isEditing ? 'Delete' : 'Cancel';
 
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
-  </header>`
-);
+
+  return (
+    `<header class="event__header">
+      ${createEventTypeTemplate(type, selectedType)}
+      ${createEventDestinationTemplate(type, place, availableDestinations)}
+      ${createEventTimeTemplate(dateFrom, dateTo)}
+      ${createEventPriceTemplate(price)}
+
+      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__reset-btn" type="reset">${resetButtonText}</button>
+      ${isEditing
+      ? `<button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>`
+      : ''
+    }
+    </header>`
+  );
+};
 
 const createOffersSectionTemplate = (offers) => {
   if (!offers.length) {
@@ -169,7 +184,7 @@ const createDestinationSectionTemplate = (description, photos) => (
   </section>`
 );
 
-const createTemplate = (state, availableDestinations) => {
+const createTemplate = (state, availableDestinations, mode) => {
   const {
     destination,
     offers,
@@ -189,11 +204,14 @@ const createTemplate = (state, availableDestinations) => {
       type,
       availableDestinations,
       place: destination?.name,
-      selectedType
+      selectedType,
+      mode
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}
-        ${destination && createDestinationSectionTemplate(destination.description, destination.pictures)}
+        ${destination
+      ? createDestinationSectionTemplate(destination.description, destination.pictures)
+      : ''}
       </section>
     </form>`
   );

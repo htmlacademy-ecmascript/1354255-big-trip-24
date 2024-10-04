@@ -2,54 +2,35 @@ import { nanoid } from 'nanoid';
 
 import { remove, render, RenderPosition } from '@/framework/render';
 
-import AddNewPointView from '@/view/add-new-point-view';
 import PointFormView from '@/view/point-view/point-form-view';
 
-import { UpdateType, UserAction } from '@/utils';
+import { pointMode, UpdateType, UserAction } from '@/utils';
 
 class AddNewPointPresenter {
-  #addNewPointComponent = null;
-
   #destinationsModel = null;
   #offersModel = null;
 
-  #handleAddPointButtonClick = null;
-
-  #pointListContainer = null;
+  #container = null;
   #addPointComponent = null;
 
   #handleDataChange = null;
   #handleDestroy = null;
 
   constructor({
-    onAddPointButtonClick,
+    container,
     destinationsModel,
     offersModel,
-    pointListContainer,
-    onDataChange
+    onDataChange,
+    onDestroy
   }) {
-    this.#handleAddPointButtonClick = onAddPointButtonClick;
+    this.#container = container;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
-    this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleDestroy = onDestroy;
   }
 
   init() {
-    if (this.#addNewPointComponent) {
-      return;
-    }
-
-    const addNewPointContainerElement = document.querySelector('.trip-main');
-
-    this.#addNewPointComponent = new AddNewPointView({
-      onAddPointButtonClick: this.#handleAddPointButtonClick
-    });
-
-    render(this.#addNewPointComponent, addNewPointContainerElement, RenderPosition.BEFOREEND);
-  }
-
-  initNewPoint() {
     if (this.#addPointComponent) {
       return;
     }
@@ -58,9 +39,11 @@ class AddNewPointPresenter {
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
+      onResetClick: this.#cancelClickHandler,
+      mode: pointMode.NEW
     });
 
-    render(this.#addPointComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
+    render(this.#addPointComponent, this.#container, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
@@ -89,6 +72,10 @@ class AddNewPointPresenter {
       evt.preventDefault();
       this.destroy();
     }
+  };
+
+  #cancelClickHandler = () => {
+    this.destroy();
   };
 }
 

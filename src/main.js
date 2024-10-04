@@ -1,4 +1,4 @@
-import AppPresenter from '@/presenter';
+import AppPresenter from '@/presenter/app-presenter';
 
 const app = new AppPresenter();
 

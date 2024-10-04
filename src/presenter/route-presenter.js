@@ -33,12 +33,14 @@ class RoutePresenter {
   #sortPresenter = null;
   #pointPresenters = new Map();
   #addNewPointPresenter = null;
+  #addPointButtonPresenter = null;
 
   constructor({
     routeModel,
     destinationsModel,
     offersModel,
-    filtersModel
+    filtersModel,
+    addPointButtonPresenter
   }) {
     this.#contentContainer = document.querySelector('.trip-events');
 
@@ -46,6 +48,7 @@ class RoutePresenter {
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filtersModel = filtersModel;
+    this.#addPointButtonPresenter = addPointButtonPresenter;
 
     this.#routeModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -61,26 +64,23 @@ class RoutePresenter {
   }
 
   init() {
-    this.#renderRoute();
-
     this.#addNewPointPresenter = new AddNewPointPresenter({
-      onAddPointButtonClick: () => {
-        this.createPoint();
-      },
-      onDataChange: this.#handleViewAction,
+      container: this.#pointListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      pointListContainer: this.#pointListComponent.element
+      onDataChange: this.#handleViewAction,
+      onDestroy: this.#addPointDestroyHandler
     });
 
-    this.#addNewPointPresenter.init();
+    this.#renderRoute();
   }
 
-  createPoint() {
+  addPointButtonClickHandler = () => {
     this.#currentSort = Sort.DAY;
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#addNewPointPresenter.initNewPoint();
-  }
+    this.#addPointButtonPresenter.disableButton();
+    this.#addNewPointPresenter.init();
+  };
 
   #renderRoute() {
     if(this.points.length === 0) {
@@ -98,7 +98,7 @@ class RoutePresenter {
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
     });
 
     pointPresenter.init(point);
@@ -208,6 +208,10 @@ class RoutePresenter {
       this.#currentSort = Sort.DAY;
     }
   }
+
+  #addPointDestroyHandler = () => {
+    this.#addPointButtonPresenter.enableButton();
+  };
 }
 
 export default RoutePresenter;

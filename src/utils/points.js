@@ -101,6 +101,11 @@ const sortPointsByType = (points, sortType) => {
   }
 };
 
+const pointMode = {
+  NEW: 'new',
+  EDIT: 'edit'
+};
+
 export {
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
@@ -112,6 +117,7 @@ export {
   isFuturePoint,
   isPastPoint,
   isPresentPoint,
+  pointMode,
   sortByPrice,
   sortByTime,
   sortPointsByType

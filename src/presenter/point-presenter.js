@@ -56,7 +56,7 @@ class PointPresenter {
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
-      onDeleteClick: this.#handleDeleteClick
+      onResetClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
