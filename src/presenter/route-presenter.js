@@ -1,5 +1,6 @@
 import { remove, render } from '@/framework/render';
 
+import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
 import SortPresenter from '@/presenter/sort-presenter';
 import MessageView from '@/view/message-view';
@@ -31,6 +32,7 @@ class RoutePresenter {
 
   #sortPresenter = null;
   #pointPresenters = new Map();
+  #addNewPointPresenter = null;
 
   constructor({
     routeModel,
@@ -60,6 +62,24 @@ class RoutePresenter {
 
   init() {
     this.#renderRoute();
+
+    this.#addNewPointPresenter = new AddNewPointPresenter({
+      onAddPointButtonClick: () => {
+        this.createPoint();
+      },
+      onDataChange: this.#handleViewAction,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      pointListContainer: this.#pointListComponent.element
+    });
+
+    this.#addNewPointPresenter.init();
+  }
+
+  createPoint() {
+    this.#currentSort = Sort.DAY;
+    this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#addNewPointPresenter.initNewPoint();
   }
 
   #renderRoute() {
