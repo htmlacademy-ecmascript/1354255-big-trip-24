@@ -88,6 +88,7 @@ class PointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeSelectHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationSelectHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
   }
 
   #setDatePickers() {
@@ -179,6 +180,21 @@ class PointFormView extends AbstractStatefulView {
   #dateToChangeHandler = ([userDate]) => {
     this._setState({
       dateTo: userDate
+    });
+  };
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+
+    if (/\D+/g.test(evt.target.value)) {
+      return;
+    }
+
+    const price = evt.target.value;
+
+    this.updateElement({
+      ...this._state,
+      price,
     });
   };
 
