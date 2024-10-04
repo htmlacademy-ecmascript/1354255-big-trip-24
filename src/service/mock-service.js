@@ -43,6 +43,14 @@ class MockService {
   getOfferById(id) {
     return OFFERS.find((offer) => offer.id === id);
   }
+
+  updatePoint(updatedPoint) {
+    return updatedPoint;
+  }
+
+  addPoint(point) {
+    return point;
+  }
 }
 
 export default MockService;

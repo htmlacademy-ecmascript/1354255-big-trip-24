@@ -150,11 +150,23 @@ class RoutePresenter {
   }
 
   #normalizePoints(points) {
-    return points.map((point) => ({
-      ...point,
-      destination: this.#destinationsModel.getDestinationById(point.destination),
-      offers: point.offers.map((offerId) => this.#offersModel.getOfferById(offerId))
-    }));
+    return points.map((point) => {
+      const destination = typeof point.destination === 'string'
+        ? this.#destinationsModel.getDestinationById(point.destination)
+        : point.destination;
+
+      const offers = point.offers[0]?.id
+        ? point.offers
+        : point.offers
+          .map((offerId) => this.#offersModel.getOfferById(offerId))
+          .filter(Boolean);
+
+      return {
+        ...point,
+        destination,
+        offers
+      };
+    });
   }
 
   #handleViewAction = (actionType, updateType, updatedPoint) => {

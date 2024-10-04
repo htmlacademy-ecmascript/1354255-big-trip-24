@@ -123,7 +123,7 @@ const createOffersSectionTemplate = (offers) => {
 
   const offersTemplate = offers.map(({ slug, title, price }) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${slug}-1" type="checkbox" name="event-offer-${slug}" checked="">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${slug}-1" type="checkbox" name="event-offer-${slug}">
       <label class="event__offer-label" for="event-offer-${slug}-1">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
@@ -188,12 +188,12 @@ const createTemplate = (state, availableDestinations) => {
       dateTo,
       type,
       availableDestinations,
-      place: destination.name,
+      place: destination?.name,
       selectedType
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}
-        ${createDestinationSectionTemplate(destination.description, destination.pictures)}
+        ${destination && createDestinationSectionTemplate(destination.description, destination.pictures)}
       </section>
     </form>`
   );
