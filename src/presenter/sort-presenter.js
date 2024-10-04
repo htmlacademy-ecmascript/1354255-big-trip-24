@@ -1,26 +1,33 @@
-import { render } from '@/framework/render';
+import { remove, render } from '@/framework/render';
 import { Sort } from '@/utils';
 import SortView from '@/view/sort-view';
 
 class SortPresenter {
   #container = null;
   #sortComponent = null;
-  #sortTypes = [];
+  #sort = [];
   #sortTypesChangeHandler = null;
 
-  constructor({ container, onSortTypeChange }) {
-    this.#sortTypes = Object.values(Sort);
+  constructor({ container, currentSort, onSortTypeChange }) {
+    this.#sort = Object.values(Sort).map((sortType) => ({
+      type: sortType,
+      isChecked: sortType === currentSort
+    }));
     this.#sortTypesChangeHandler = onSortTypeChange;
     this.#container = container;
   }
 
   init() {
     this.#sortComponent = new SortView({
-      items: this.#sortTypes,
-      onItemChange: this.#sortTypesChangeHandler
+      items: this.#sort,
+      onItemChange: this.#sortTypesChangeHandler,
     });
 
     render(this.#sortComponent, this.#container);
+  }
+
+  destroy() {
+    remove(this.#sortComponent);
   }
 }
 

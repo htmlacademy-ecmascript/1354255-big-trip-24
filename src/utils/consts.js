@@ -31,10 +31,23 @@ const Sort = Object.freeze({
   OFFER: 'offer'
 });
 
+const UserAction = Object.freeze({
+  UPDATE_POINT: 'update',
+  ADD_POINT: 'add',
+  DELETE_POINT: 'delete',
+});
+
+const UpdateType = {
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
+};
 
 export {
   FilterType,
   MessageOnLoading,
   PointType,
-  Sort
+  Sort,
+  UpdateType,
+  UserAction
 };

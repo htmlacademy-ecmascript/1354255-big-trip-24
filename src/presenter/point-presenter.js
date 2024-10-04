@@ -1,6 +1,9 @@
 import { remove, render, replace } from '@/framework/render';
+
 import PointFormView from '@/view/point-view/point-form-view';
 import PointItemView from '@/view/point-view/point-item-view';
+
+import { UpdateType, UserAction } from '@/utils';
 
 const Mode = {
   DEFAULT: 'default',
@@ -112,7 +115,11 @@ class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
     this.#replaceFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
@@ -123,7 +130,11 @@ class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({ ...this.#point, isFavorite: !this.#point.isFavorite });
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
   };
 }
 

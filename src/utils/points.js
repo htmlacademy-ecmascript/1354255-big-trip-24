@@ -90,14 +90,14 @@ const sortByTime = (pointA, pointB) => {
 
 const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
 
-const sortPointsByType = (points, pointsRaw, sortType) => {
+const sortPointsByType = (points, sortType) => {
   switch (sortType) {
     case Sort.TIME:
       return points.toSorted(sortByTime);
     case Sort.PRICE:
       return points.toSorted(sortByPrice);
     default:
-      return [...pointsRaw];
+      return [...points];
   }
 };
 

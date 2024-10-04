@@ -1,4 +1,4 @@
-import { render } from '@/framework/render';
+import { remove, render } from '@/framework/render';
 
 import PointPresenter from '@/presenter/point-presenter';
 import SortPresenter from '@/presenter/sort-presenter';
@@ -9,12 +9,11 @@ import {
   MessageOnLoading,
   Sort,
   sortPointsByType,
-  updateItem
+  UpdateType,
+  UserAction
 } from '@/utils';
 
 class RoutePresenter {
-  #points = [];
-  #pointsRaw = [];
   #currentSort = Sort.DAY;
 
   #routeModel = null;
@@ -38,22 +37,27 @@ class RoutePresenter {
     this.#routeModel = routeModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+
+    this.#routeModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    const points = this.#normalizePoints(this.#routeModel.points);
+
+    return sortPointsByType(points, this.#currentSort);
   }
 
   init() {
-    this.#points = this.#normalizePoints(this.#routeModel.points);
-    this.#pointsRaw = this.#normalizePoints(this.#routeModel.points);
-
     this.#renderRoute();
   }
 
   #renderRoute() {
-    if(this.#points.length === 0) {
+    if(this.points.length === 0) {
       this.#renderEmptyPointList();
       return;
     }
 
-    this.#renderSort();
+    this.#renderSort(this.#currentSort);
     this.#renderPointList();
   }
 
@@ -62,7 +66,7 @@ class RoutePresenter {
       pointListContainer: this.#pointListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
 
@@ -72,12 +76,13 @@ class RoutePresenter {
 
   #renderPointList() {
     render(this.#pointListComponent, this.#contentContainer);
-    this.#points.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderSort() {
     this.#sortPresenter = new SortPresenter({
       container: this.#contentContainer,
+      currentSort: this.#currentSort,
       onSortTypeChange: this.#handleSortTypeChange
     });
 
@@ -88,12 +93,6 @@ class RoutePresenter {
     render(this.#emptyPointListComponent, this.#contentContainer);
   }
 
-  #handlePointChange = (updatedPoint) => {
-    this.#points = updateItem(this.#points, updatedPoint);
-    this.#pointsRaw = updateItem(this.#pointsRaw, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
@@ -103,19 +102,19 @@ class RoutePresenter {
       return;
     }
 
-    this.#sortPoints(sortType);
-    this.#clearPointList();
-    this.#renderPointList();
-  };
-
-  #sortPoints(sortType) {
-    this.#points = sortPointsByType(this.#points, this.#pointsRaw, sortType);
     this.#currentSort = sortType;
-  }
+
+    this.#clearRoute();
+    this.#renderRoute();
+  };
 
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+  }
+
+  #clearSort() {
+    this.#sortPresenter.destroy();
   }
 
   #normalizePoints(points) {
@@ -124,6 +123,46 @@ class RoutePresenter {
       destination: this.#destinationsModel.getDestinationById(point.destination),
       offers: point.offers.map((offerId) => this.#offersModel.getOfferById(offerId))
     }));
+  }
+
+  #handleViewAction = (actionType, updateType, updatedPoint) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#routeModel.updatePoint(updateType, updatedPoint);
+        break;
+      case UserAction.ADD_POINT:
+        this.#routeModel.addPoint(updateType, updatedPoint);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#routeModel.deletePoint(updateType, updatedPoint);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearRoute();
+        this.#renderRoute();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearRoute(true);
+        this.#renderRoute();
+        break;
+    }
+  };
+
+  #clearRoute(resetSortType = false) {
+    this.#clearPointList();
+    this.#clearSort();
+    remove(this.#emptyPointListComponent);
+
+    if (resetSortType) {
+      this.#currentSort = Sort.DEFAULT;
+    }
   }
 }
 
