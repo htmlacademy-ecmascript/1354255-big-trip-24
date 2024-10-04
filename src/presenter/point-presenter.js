@@ -56,6 +56,7 @@ class PointPresenter {
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
       onCloseClick: this.#handleCloseClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -134,6 +135,14 @@ class PointPresenter {
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       {...this.#point, isFavorite: !this.#point.isFavorite},
+    );
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
     );
   };
 }

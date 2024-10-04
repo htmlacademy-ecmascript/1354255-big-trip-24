@@ -30,6 +30,7 @@ class PointFormView extends AbstractStatefulView {
 
   #handleFormSubmit = null;
   #handleCloseClick = null;
+  #handleDeleteClick = null;
 
   constructor({
     point = DEFAULT_POINT,
@@ -37,6 +38,7 @@ class PointFormView extends AbstractStatefulView {
     destinationsModel,
     onFormSubmit,
     onCloseClick,
+    onDeleteClick
   }) {
     super();
     this._setState(PointFormView.parsePointToState(point));
@@ -45,6 +47,7 @@ class PointFormView extends AbstractStatefulView {
     this.#destinationsModel = destinationsModel;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this.#setEventListeners();
     this.#setDatePickers();
@@ -84,6 +87,7 @@ class PointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeSelectHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationSelectHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
   }
 
   #setDatePickers() {
@@ -128,6 +132,11 @@ class PointFormView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleCloseClick(PointFormView.parseStateToPoint(this._state));
+  };
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(PointFormView.parseStateToPoint(this._state));
   };
 
   #pointTypeSelectHandler = (evt) => {
