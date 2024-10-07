@@ -23,6 +23,13 @@ const FilterType = Object.freeze({
   PAST: 'past'
 });
 
+const EmptyFilterMessage = Object.freeze({
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now'
+});
+
 const Sort = Object.freeze({
   DAY: 'day',
   EVENT: 'event',
@@ -31,10 +38,24 @@ const Sort = Object.freeze({
   OFFER: 'offer'
 });
 
+const UserAction = Object.freeze({
+  UPDATE_POINT: 'update',
+  ADD_POINT: 'add',
+  DELETE_POINT: 'delete',
+});
+
+const UpdateType = {
+  PATCH: 'patch',
+  MINOR: 'minor',
+  MAJOR: 'major',
+};
 
 export {
+  EmptyFilterMessage,
   FilterType,
   MessageOnLoading,
   PointType,
-  Sort
+  Sort,
+  UpdateType,
+  UserAction
 };

@@ -82,7 +82,7 @@ const createTemplate = (point) => {
     `<li class="trip-events__item">
       <div class="event">
         ${createDateTemplate(dateFrom)}
-        ${createPlaceTemplate(type, destination.name)}
+        ${createPlaceTemplate(type, destination?.name)}
         ${createScheduleTemplate(dateFrom, dateTo)}
         ${createPriceTemplate(price)}
         ${createOffersTemplate(offers)}

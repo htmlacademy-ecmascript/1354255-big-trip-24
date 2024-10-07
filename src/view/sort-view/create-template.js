@@ -2,22 +2,21 @@ import { capitalizeFirstLetter, Sort } from '@/utils';
 
 const SORT_DISABLED = [Sort.EVENT, Sort.OFFER];
 
-const createTemplate = () => {
-  const template = Object.values(Sort).map((sort) => {
-    const isChecked = sort === Sort.DAY ? 'checked' : '';
-    const isDisabled = SORT_DISABLED.includes(sort) ? 'disabled' : '';
+const createTemplate = (items) => {
+  const template = items.map(({ type, isChecked }) => {
+    const isDisabled = SORT_DISABLED.includes(type) ? 'disabled' : '';
 
     return (
-      `<div class="trip-sort__item trip-sort__item--${sort}">
+      `<div class="trip-sort__item trip-sort__item--${type}">
         <input
-          id="sort-${sort}"
+          id="sort-${type}"
           class="trip-sort__input  visually-hidden"
           type="radio" name="trip-sort"
-          value="sort-${sort}"
-          data-type="${sort}"
-          ${isChecked}
+          value="sort-${type}"
+          data-type="${type}"
+          ${isChecked ? 'checked' : ''}
           ${isDisabled}>
-        <label class="trip-sort__btn" for="sort-${sort}">${capitalizeFirstLetter(sort)}</label>
+        <label class="trip-sort__btn" for="sort-${type}">${capitalizeFirstLetter(type)}</label>
       </div>`
     );
   }).join('');
