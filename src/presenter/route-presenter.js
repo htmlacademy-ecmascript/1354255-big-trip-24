@@ -78,7 +78,6 @@ class RoutePresenter {
   }
 
   addPointButtonClickHandler = () => {
-    this.#currentSort = Sort.DAY;
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#addPointButtonPresenter.disableButton();
     this.#addNewPointPresenter.init();
