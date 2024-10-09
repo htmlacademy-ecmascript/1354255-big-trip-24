@@ -44,24 +44,24 @@ const UserAction = Object.freeze({
   DELETE_POINT: 'delete',
 });
 
-const UpdateType = {
+const UpdateType = Object.freeze({
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
   INIT: 'init',
-};
+});
 
-const Method = {
+const Method = Object.freeze({
   GET: 'GET',
   POST: 'POST',
   PUT: 'PUT'
-};
+});
 
-const ApiEndpoint = {
+const ApiEndpoint = Object.freeze({
   POINTS: 'points',
   DESTINATIONS: 'destinations',
   OFFERS: 'offers',
-};
+});
 
 export {
   ApiEndpoint,

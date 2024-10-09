@@ -17,10 +17,6 @@ class OffersModel {
     return this.#offers;
   }
 
-  getOfferById(id) {
-    return this.#offers.find((offer) => offer.id === id);
-  }
-
   getOffersByPointType(type) {
     const existingOffer = this.#offers.find((offer) => offer.type === type);
 
