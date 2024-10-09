@@ -21,6 +21,7 @@ class RoutePresenter {
   #currentSort = Sort.DAY;
   #currentFilter = FilterType.EVERYTHING;
   #isLoading = true;
+  #error = null;
 
   #routeModel = null;
   #destinationsModel = null;
@@ -89,6 +90,11 @@ class RoutePresenter {
       return;
     }
 
+    if (this.#error) {
+      this.#renderError(this.#error);
+      return;
+    }
+
     if(this.points.length === 0) {
       this.#renderEmptyPointList();
       return;
@@ -133,6 +139,11 @@ class RoutePresenter {
 
   #renderLoading() {
     render(this.#loadingComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderError(error) {
+    const errorComponent = new MessageView(error);
+    render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
   #handleModeChange = () => {
@@ -188,6 +199,11 @@ class RoutePresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
+
+        if (data.error) {
+          this.#error = data.error;
+        }
+
         remove(this.#loadingComponent);
         this.#renderRoute();
         break;
