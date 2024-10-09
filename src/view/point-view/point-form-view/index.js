@@ -13,7 +13,7 @@ import { createTemplate } from './create-template';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const DEFAULT_POINT = {
-  price: 0,
+  basePrice: 0,
   dateFrom: createDefaultPointDateFrom(),
   dateTo: createDefaultPointDateTo(),
   destination: null,
@@ -198,11 +198,11 @@ class PointFormView extends AbstractStatefulView {
       return;
     }
 
-    const price = evt.target.value;
+    const basePrice = evt.target.value;
 
     this.updateElement({
       ...this._state,
-      price,
+      basePrice,
     });
   };
 

@@ -48,12 +48,27 @@ const UpdateType = {
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
+  INIT: 'init',
+};
+
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT'
+};
+
+const ApiEndpoint = {
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
 };
 
 export {
+  ApiEndpoint,
   EmptyFilterMessage,
   FilterType,
   MessageOnLoading,
+  Method,
   PointType,
   Sort,
   UpdateType,

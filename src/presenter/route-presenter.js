@@ -1,4 +1,4 @@
-import { remove, render } from '@/framework/render';
+import { remove, render, RenderPosition } from '@/framework/render';
 
 import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
@@ -20,6 +20,7 @@ import {
 class RoutePresenter {
   #currentSort = Sort.DAY;
   #currentFilter = FilterType.EVERYTHING;
+  #isLoading = true;
 
   #routeModel = null;
   #destinationsModel = null;
@@ -29,6 +30,7 @@ class RoutePresenter {
   #contentContainer = null;
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
+  #loadingComponent = new MessageView(MessageOnLoading.LOADING);
 
   #sortPresenter = null;
   #pointPresenters = new Map();
@@ -55,7 +57,7 @@ class RoutePresenter {
   }
 
   get points() {
-    const points = this.#normalizePoints(this.#routeModel.points);
+    const points = this.#routeModel.points;
     this.#currentFilter = this.#filtersModel.filter;
 
     const filteredPoints = filter[this.#currentFilter](points);
@@ -83,6 +85,11 @@ class RoutePresenter {
   };
 
   #renderRoute() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if(this.points.length === 0) {
       this.#renderEmptyPointList();
       return;
@@ -125,6 +132,10 @@ class RoutePresenter {
     render(this.#emptyPointListComponent, this.#contentContainer);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+  }
+
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
@@ -147,26 +158,6 @@ class RoutePresenter {
 
   #clearSort() {
     this.#sortPresenter.destroy();
-  }
-
-  #normalizePoints(points) {
-    return points.map((point) => {
-      const destination = typeof point.destination === 'string'
-        ? this.#destinationsModel.getDestinationById(point.destination)
-        : point.destination;
-
-      const offers = point.offers[0]?.id
-        ? point.offers
-        : point.offers
-          .map((offerId) => this.#offersModel.getOfferById(offerId))
-          .filter(Boolean);
-
-      return {
-        ...point,
-        destination,
-        offers
-      };
-    });
   }
 
   #handleViewAction = (actionType, updateType, updatedPoint) => {
@@ -194,6 +185,11 @@ class RoutePresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearRoute(true);
+        this.#renderRoute();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderRoute();
         break;
     }

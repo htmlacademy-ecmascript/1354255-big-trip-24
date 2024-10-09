@@ -99,7 +99,7 @@ const createEventPriceTemplate = (price) => (
 );
 
 const createHeaderTemplate = ({
-  price,
+  basePrice,
   dateFrom,
   dateTo,
   type,
@@ -117,7 +117,7 @@ const createHeaderTemplate = ({
       ${createEventTypeTemplate(type, selectedType)}
       ${createEventDestinationTemplate(type, place, availableDestinations)}
       ${createEventTimeTemplate(dateFrom, dateTo)}
-      ${createEventPriceTemplate(price)}
+      ${createEventPriceTemplate(basePrice)}
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${resetButtonText}</button>
@@ -203,13 +203,13 @@ const createTemplate = (state, availableDestinations, mode) => {
       dateTo,
       type,
       availableDestinations,
-      place: destination?.name,
+      place: destination.name,
       selectedType,
       mode
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}
-        ${destination
+        ${destination.description
       ? createDestinationSectionTemplate(destination.description, destination.pictures)
       : ''}
       </section>
