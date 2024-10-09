@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid';
-
 import { remove, render, RenderPosition } from '@/framework/render';
 
 import PointFormView from '@/view/point-view/point-form-view';
@@ -58,11 +56,22 @@ class AddNewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving = () => {
+    this.#addPointComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    this.#addPointComponent.shake(this.#resetFormState);
+  };
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange (
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      { id: nanoid(), ...point }
+      point
     );
     this.destroy();
   };
@@ -76,6 +85,14 @@ class AddNewPointPresenter {
 
   #cancelClickHandler = () => {
     this.destroy();
+  };
+
+  #resetFormState = () => {
+    this.#addPointComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
   };
 }
 

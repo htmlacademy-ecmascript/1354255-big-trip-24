@@ -24,7 +24,7 @@ const pointsAdapter = new PointsAdapter({
   offersModel
 });
 
-const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION);
+const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION, pointsAdapter);
 
 const routeModel = new RouteModel({
   service: pointsApiService,

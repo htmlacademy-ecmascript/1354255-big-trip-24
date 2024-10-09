@@ -49,12 +49,14 @@ const UpdateType = Object.freeze({
   MINOR: 'minor',
   MAJOR: 'major',
   INIT: 'init',
+  ERROR: 'error'
 });
 
 const Method = Object.freeze({
   GET: 'GET',
   POST: 'POST',
-  PUT: 'PUT'
+  PUT: 'PUT',
+  DELETE: 'DELETE'
 });
 
 const ApiEndpoint = Object.freeze({
@@ -63,12 +65,21 @@ const ApiEndpoint = Object.freeze({
   OFFERS: 'offers',
 });
 
+const PointErrorMessage = Object.freeze({
+  DELETE_UNEXISTING: 'Can\'t delete unexisting point',
+  UPDATE_UNEXISTING: 'Can\'t update unexisting point',
+  UPDATE: 'Can\'t update point',
+  ADD: 'Can\'t add point',
+  DELETE: 'Can\'t delete point'
+});
+
 export {
   ApiEndpoint,
   EmptyFilterMessage,
   FilterType,
   MessageOnLoading,
   Method,
+  PointErrorMessage,
   PointType,
   Sort,
   UpdateType,

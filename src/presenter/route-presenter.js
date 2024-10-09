@@ -1,4 +1,5 @@
 import { remove, render, RenderPosition } from '@/framework/render';
+import UiBlocker from '@/framework/ui-blocker/ui-blocker';
 
 import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
@@ -17,6 +18,11 @@ import {
   UserAction
 } from '@/utils';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 class RoutePresenter {
   #currentSort = Sort.DAY;
   #currentFilter = FilterType.EVERYTHING;
@@ -32,6 +38,10 @@ class RoutePresenter {
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
   #loadingComponent = new MessageView(MessageOnLoading.LOADING);
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   #sortPresenter = null;
   #pointPresenters = new Map();
@@ -170,18 +180,39 @@ class RoutePresenter {
     this.#sortPresenter.destroy();
   }
 
-  #handleViewAction = (actionType, updateType, updatedPoint) => {
+  #handleViewAction = async (actionType, updateType, updatedPoint) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#routeModel.updatePoint(updateType, updatedPoint);
+        this.#pointPresenters.get(updatedPoint.id).setSaving();
+        try {
+          await this.#routeModel.update(updateType, updatedPoint);
+        } catch {
+          this.#pointPresenters.get(updatedPoint.id).setAborting();
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#routeModel.addPoint(updateType, updatedPoint);
+        this.#addNewPointPresenter.setSaving();
+        try {
+          await this.#routeModel.add(updateType, updatedPoint);
+        } catch {
+          this.#addNewPointPresenter.setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#routeModel.deletePoint(updateType, updatedPoint);
+        this.#pointPresenters.get(updatedPoint.id).setDeleting();
+        try {
+          await this.#routeModel.delete(updateType, updatedPoint);
+        } catch {
+          this.#pointPresenters.get(updatedPoint.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -189,22 +220,28 @@ class RoutePresenter {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
+
       case UpdateType.MINOR:
         this.#clearRoute();
         this.#renderRoute();
         break;
+
       case UpdateType.MAJOR:
         this.#clearRoute(true);
         this.#renderRoute();
         break;
+
       case UpdateType.INIT:
         this.#isLoading = false;
-
-        if (data.error) {
-          this.#error = data.error;
-        }
-
         remove(this.#loadingComponent);
+        this.#renderRoute();
+        break;
+
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#error = data;
+        remove(this.#loadingComponent);
+        this.#clearRoute();
         this.#renderRoute();
         break;
     }
