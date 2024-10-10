@@ -115,15 +115,6 @@ class PointPresenter {
     });
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#replaceFormToPoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-    }
-  };
-
   #replaceFormToPoint() {
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
@@ -136,6 +127,14 @@ class PointPresenter {
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
+
+  #resetFormState = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
+  };
 
   #handleEditClick = () => {
     this.#replacePointToForm();
@@ -173,12 +172,13 @@ class PointPresenter {
     );
   };
 
-  #resetFormState = () => {
-    this.#pointEditComponent.updateElement({
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    });
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
+      this.#replaceFormToPoint();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
   };
 }
 

@@ -24,18 +24,16 @@ const DateTimeFormat = {
   MINUTES_DURATION: 'mm[M]'
 };
 
+const pointMode = {
+  NEW: 'new',
+  EDIT: 'edit'
+};
+
 const now = dayjs();
 
 const createDefaultPointDateFrom = () => now.utc().format();
 
 const createDefaultPointDateTo = () => now.add(1, 'hour').utc().format();
-
-const createMockPointDate = (timeToAdd) => now
-  .add(timeToAdd, 'day')
-  .add(timeToAdd, 'hour')
-  .add(timeToAdd ** 2, 'minute')
-  .utc()
-  .format();
 
 const formatPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.DEFAULT) : '';
 
@@ -101,11 +99,6 @@ const sortPointsByType = (points, sortType) => {
   }
 };
 
-const pointMode = {
-  NEW: 'new',
-  EDIT: 'edit'
-};
-
 const parseDate = (point, key) => point[key] !== null ? new Date(point[key]) : point[key];
 
 const createOfferSlug = (title) => title
@@ -118,7 +111,6 @@ const createOfferSlug = (title) => title
 export {
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
-  createMockPointDate,
   createOfferSlug,
   formatEditPointDate,
   formatPointDate,

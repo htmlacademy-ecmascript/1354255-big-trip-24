@@ -1,4 +1,5 @@
 import Observable from '@/framework/observable';
+
 import { FilterType } from '@/utils';
 
 class FilersModel extends Observable {

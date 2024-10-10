@@ -156,6 +156,25 @@ class RoutePresenter {
     render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
+  #clearSort() {
+    this.#sortPresenter.destroy();
+  }
+
+  #clearRoute(resetSortType = false) {
+    this.#clearPointList();
+    this.#clearSort();
+    remove(this.#emptyPointListComponent);
+
+    if (resetSortType) {
+      this.#currentSort = Sort.DAY;
+    }
+  }
+
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
@@ -170,15 +189,6 @@ class RoutePresenter {
     this.#clearRoute();
     this.#renderRoute();
   };
-
-  #clearPointList() {
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-  }
-
-  #clearSort() {
-    this.#sortPresenter.destroy();
-  }
 
   #handleViewAction = async (actionType, updateType, updatedPoint) => {
     this.#uiBlocker.block();
@@ -246,16 +256,6 @@ class RoutePresenter {
         break;
     }
   };
-
-  #clearRoute(resetSortType = false) {
-    this.#clearPointList();
-    this.#clearSort();
-    remove(this.#emptyPointListComponent);
-
-    if (resetSortType) {
-      this.#currentSort = Sort.DAY;
-    }
-  }
 
   #addPointDestroyHandler = () => {
     this.#addPointButtonPresenter.enableButton();

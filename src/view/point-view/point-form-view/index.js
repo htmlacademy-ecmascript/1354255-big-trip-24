@@ -24,6 +24,7 @@ const DEFAULT_POINT = {
 };
 
 class PointFormView extends AbstractStatefulView {
+  #mode = pointMode.EDIT;
   #datepickerStart = null;
   #datepickerEnd = null;
 
@@ -33,8 +34,6 @@ class PointFormView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleCloseClick = null;
   #handleResetClick = null;
-
-  #mode = pointMode.EDIT;
 
   constructor({
     point = DEFAULT_POINT,
@@ -77,15 +76,15 @@ class PointFormView extends AbstractStatefulView {
     }
   }
 
-  _restoreHandlers() {
-    this.#setEventListeners();
-    this.#setDatePickers();
-  }
-
   reset(point) {
     this.updateElement(
       PointFormView.parsePointToState(point),
     );
+  }
+
+  _restoreHandlers() {
+    this.#setEventListeners();
+    this.#setDatePickers();
   }
 
   #setEventListeners() {

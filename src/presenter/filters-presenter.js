@@ -1,7 +1,8 @@
 import { remove, render, replace } from '@/framework/render';
 
-import { FilterType, UpdateType, filter } from '@/utils';
 import FilterView from '@/view/filter-view';
+
+import { FilterType, UpdateType, filter } from '@/utils';
 
 class FiltersPresenter {
   #routeModel = null;

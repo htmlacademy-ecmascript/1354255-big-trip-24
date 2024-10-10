@@ -13,8 +13,6 @@ class RouteModel extends Observable {
   #service = null;
   #adapter = null;
 
-  #error = null;
-
   constructor({ service, adapter }) {
     super();
     this.#service = service;
@@ -35,13 +33,11 @@ class RouteModel extends Observable {
       this._notify(UpdateType.INIT);
     } catch(err) {
       this.#points = [];
-      this.#error = err;
 
       this._notify(UpdateType.ERROR, err);
       throw err;
     }
   }
-
 
   async updatePoint(updateType, updatedPoint) {
     const index = this.#points.findIndex((point) => point.id === updatedPoint.id);

@@ -2,9 +2,10 @@ import AbstractView from '@/framework/view/abstract-view';
 import { createTemplate } from './create-template';
 
 class PointItemView extends AbstractView {
-  #point;
-  #handleEditClick;
-  #handleFavoriteClick;
+  #point = null;
+
+  #handleEditClick = null;
+  #handleFavoriteClick = null;
 
   constructor({ point, onEditClick, onFavoriteClick }) {
     super();

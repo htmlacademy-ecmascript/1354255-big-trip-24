@@ -3,9 +3,11 @@ import { Sort } from '@/utils';
 import SortView from '@/view/sort-view';
 
 class SortPresenter {
+  #sort = [];
+
   #container = null;
   #sortComponent = null;
-  #sort = [];
+
   #sortTypesChangeHandler = null;
 
   constructor({ container, currentSort, onSortTypeChange }) {
