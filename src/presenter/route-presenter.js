@@ -187,7 +187,7 @@ class RoutePresenter {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(updatedPoint.id).setSaving();
         try {
-          await this.#routeModel.update(updateType, updatedPoint);
+          await this.#routeModel.updatePoint(updateType, updatedPoint);
         } catch {
           this.#pointPresenters.get(updatedPoint.id).setAborting();
         }
@@ -196,8 +196,8 @@ class RoutePresenter {
       case UserAction.ADD_POINT:
         this.#addNewPointPresenter.setSaving();
         try {
-          await this.#routeModel.add(updateType, updatedPoint);
-        } catch {
+          await this.#routeModel.addPoint(updateType, updatedPoint);
+        } catch(err) {
           this.#addNewPointPresenter.setAborting();
         }
         break;
@@ -205,7 +205,7 @@ class RoutePresenter {
       case UserAction.DELETE_POINT:
         this.#pointPresenters.get(updatedPoint.id).setDeleting();
         try {
-          await this.#routeModel.delete(updateType, updatedPoint);
+          await this.#routeModel.deletePoint(updateType, updatedPoint);
         } catch {
           this.#pointPresenters.get(updatedPoint.id).setAborting();
         }
