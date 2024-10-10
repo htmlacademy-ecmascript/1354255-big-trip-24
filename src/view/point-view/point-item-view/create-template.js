@@ -69,7 +69,7 @@ const createFavoriteButtonTemplate = (isFavorite) => {
 
 const createTemplate = (point) => {
   const {
-    price,
+    basePrice,
     dateFrom,
     dateTo,
     destination,
@@ -84,7 +84,7 @@ const createTemplate = (point) => {
         ${createDateTemplate(dateFrom)}
         ${createPlaceTemplate(type, destination?.name)}
         ${createScheduleTemplate(dateFrom, dateTo)}
-        ${createPriceTemplate(price)}
+        ${createPriceTemplate(basePrice)}
         ${createOffersTemplate(offers)}
         ${createFavoriteButtonTemplate(isFavorite)}
         <button class="event__rollup-btn" type="button">

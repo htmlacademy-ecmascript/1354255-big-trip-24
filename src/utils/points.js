@@ -88,7 +88,7 @@ const sortByTime = (pointA, pointB) => {
   return weight ?? dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
 };
 
-const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
+const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 const sortPointsByType = (points, sortType) => {
   switch (sortType) {
@@ -106,10 +106,20 @@ const pointMode = {
   EDIT: 'edit'
 };
 
+const parseDate = (point, key) => point[key] !== null ? new Date(point[key]) : point[key];
+
+const createOfferSlug = (title) => title
+  .toLowerCase()
+  .split(/\s/g)
+  .sort((a, b) => b.length - a.length)
+  .slice(0, 2)
+  .join('-');
+
 export {
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
   createMockPointDate,
+  createOfferSlug,
   formatEditPointDate,
   formatPointDate,
   getTimeDifference,
@@ -117,6 +127,7 @@ export {
   isFuturePoint,
   isPastPoint,
   isPresentPoint,
+  parseDate,
   pointMode,
   sortByPrice,
   sortByTime,

@@ -88,6 +88,33 @@ class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
+  setSaving = () => {
+    if (this.#mode !== Mode.EDITING) {
+      return;
+    }
+
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointEditComponent.shake();
+      return;
+    }
+
+    this.#pointEditComponent.shake(this.#resetFormState);
+  };
+
+  setDeleting = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isDeleting: true,
+    });
+  };
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
@@ -133,7 +160,7 @@ class PointPresenter {
   #handleFavoriteClick = () => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       {...this.#point, isFavorite: !this.#point.isFavorite},
     );
   };
@@ -144,6 +171,14 @@ class PointPresenter {
       UpdateType.MINOR,
       point
     );
+  };
+
+  #resetFormState = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
   };
 }
 

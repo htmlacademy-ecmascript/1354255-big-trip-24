@@ -1,6 +1,7 @@
 import {
   PointType,
   capitalizeFirstLetter,
+  createOfferSlug,
   formatEditPointDate,
   pointMode
 } from '@/utils';
@@ -60,7 +61,7 @@ const createEventDestinationTemplate = (type, place, availableDestinations) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${place || ''}"
+        value="${place || availableDestinations[0]}"
         list="destination-list-1">
       <datalist id="destination-list-1">
         ${destinationsList}
@@ -99,7 +100,7 @@ const createEventPriceTemplate = (price) => (
 );
 
 const createHeaderTemplate = ({
-  price,
+  basePrice,
   dateFrom,
   dateTo,
   type,
@@ -117,7 +118,7 @@ const createHeaderTemplate = ({
       ${createEventTypeTemplate(type, selectedType)}
       ${createEventDestinationTemplate(type, place, availableDestinations)}
       ${createEventTimeTemplate(dateFrom, dateTo)}
-      ${createEventPriceTemplate(price)}
+      ${createEventPriceTemplate(basePrice)}
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">${resetButtonText}</button>
@@ -136,10 +137,15 @@ const createOffersSectionTemplate = (offers) => {
     return '';
   }
 
-  const offersTemplate = offers.map(({ slug, title, price }) => (
+  const offersTemplate = offers.map(({ title, price }) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${slug}-1" type="checkbox" name="event-offer-${slug}">
-      <label class="event__offer-label" for="event-offer-${slug}-1">
+      <input
+        class="event__offer-checkbox  visually-hidden"
+        id="event-offer-${createOfferSlug(title)}-1"
+        type="checkbox"
+        name="event-offer-${createOfferSlug(title)}"
+      >
+      <label class="event__offer-label" for="event-offer-${createOfferSlug(title)}-1">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
         <span class="event__offer-price">${price}</span>
@@ -188,7 +194,7 @@ const createTemplate = (state, availableDestinations, mode) => {
   const {
     destination,
     offers,
-    price,
+    basePrice,
     dateFrom,
     dateTo,
     type,
@@ -198,18 +204,18 @@ const createTemplate = (state, availableDestinations, mode) => {
   return (
     `<form class="event event--edit" action="#" method="post">
       ${createHeaderTemplate({
-      price,
+      basePrice,
       dateFrom,
       dateTo,
       type,
       availableDestinations,
-      place: destination?.name,
+      place: destination?.name || '',
       selectedType,
       mode
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}
-        ${destination
+        ${destination?.description
       ? createDestinationSectionTemplate(destination.description, destination.pictures)
       : ''}
       </section>

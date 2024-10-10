@@ -44,16 +44,42 @@ const UserAction = Object.freeze({
   DELETE_POINT: 'delete',
 });
 
-const UpdateType = {
+const UpdateType = Object.freeze({
   PATCH: 'patch',
   MINOR: 'minor',
   MAJOR: 'major',
-};
+  INIT: 'init',
+  ERROR: 'error'
+});
+
+const Method = Object.freeze({
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE'
+});
+
+const ApiEndpoint = Object.freeze({
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
+});
+
+const PointErrorMessage = Object.freeze({
+  DELETE_UNEXISTING: 'Can\'t delete unexisting point',
+  UPDATE_UNEXISTING: 'Can\'t update unexisting point',
+  UPDATE: 'Can\'t update point',
+  ADD: 'Can\'t add point',
+  DELETE: 'Can\'t delete point'
+});
 
 export {
+  ApiEndpoint,
   EmptyFilterMessage,
   FilterType,
   MessageOnLoading,
+  Method,
+  PointErrorMessage,
   PointType,
   Sort,
   UpdateType,

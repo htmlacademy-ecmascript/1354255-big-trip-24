@@ -1,22 +1,30 @@
 class OffersModel {
+  #offers = [];
+
   #service = null;
 
   constructor(service) {
     this.#service = service;
+    this.#offers = this.#service.offers;
   }
 
-  getOfferById(id) {
-    return this.#service.getOfferById(id);
+  get offers() {
+    return this.#offers;
+  }
+
+  async init() {
+    this.#offers = await this.#service.offers;
+    return this.#offers;
   }
 
   getOffersByPointType(type) {
-    const existedOffer = this.#service.offers.find((offer) => offer.type === type);
+    const existingOffer = this.#offers.find((offer) => offer.type === type);
 
-    if (!existedOffer) {
+    if (!existingOffer) {
       return [];
     }
 
-    return existedOffer.offers.map((offerId) => this.getOfferById(offerId));
+    return existingOffer.offers;
   }
 }
 

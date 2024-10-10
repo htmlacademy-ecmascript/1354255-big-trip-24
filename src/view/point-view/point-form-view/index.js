@@ -3,17 +3,18 @@ import flatpickr from 'flatpickr';
 import AbstractStatefulView from '@/framework/view/abstract-stateful-view';
 
 import {
-  PointType,
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
-  pointMode
+  isValidPrice,
+  pointMode,
+  PointType
 } from '@/utils';
 import { createTemplate } from './create-template';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 const DEFAULT_POINT = {
-  price: 0,
+  basePrice: 100,
   dateFrom: createDefaultPointDateFrom(),
   dateTo: createDefaultPointDateTo(),
   destination: null,
@@ -194,15 +195,16 @@ class PointFormView extends AbstractStatefulView {
   #priceInputHandler = (evt) => {
     evt.preventDefault();
 
-    if (/\D+/g.test(evt.target.value)) {
+    if (!isValidPrice(evt.target.value)) {
+      evt.target.value = this._state.basePrice;
       return;
     }
 
-    const price = evt.target.value;
+    const basePrice = evt.target.valueAsNumber;
 
     this.updateElement({
       ...this._state,
-      price,
+      basePrice,
     });
   };
 
@@ -210,6 +212,9 @@ class PointFormView extends AbstractStatefulView {
     return {
       ...point,
       selectedType: point.type,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
@@ -217,6 +222,9 @@ class PointFormView extends AbstractStatefulView {
     const point = { ...state };
 
     delete point.selectedType;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
 
     return point;
   }

@@ -1,4 +1,5 @@
-import { remove, render } from '@/framework/render';
+import { remove, render, RenderPosition } from '@/framework/render';
+import UiBlocker from '@/framework/ui-blocker/ui-blocker';
 
 import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
@@ -17,9 +18,16 @@ import {
   UserAction
 } from '@/utils';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 class RoutePresenter {
   #currentSort = Sort.DAY;
   #currentFilter = FilterType.EVERYTHING;
+  #isLoading = true;
+  #error = null;
 
   #routeModel = null;
   #destinationsModel = null;
@@ -29,6 +37,11 @@ class RoutePresenter {
   #contentContainer = null;
   #pointListComponent = new PointListView();
   #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
+  #loadingComponent = new MessageView(MessageOnLoading.LOADING);
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT,
+  });
 
   #sortPresenter = null;
   #pointPresenters = new Map();
@@ -55,7 +68,7 @@ class RoutePresenter {
   }
 
   get points() {
-    const points = this.#normalizePoints(this.#routeModel.points);
+    const points = this.#routeModel.points;
     this.#currentFilter = this.#filtersModel.filter;
 
     const filteredPoints = filter[this.#currentFilter](points);
@@ -76,13 +89,22 @@ class RoutePresenter {
   }
 
   addPointButtonClickHandler = () => {
-    this.#currentSort = Sort.DAY;
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#addPointButtonPresenter.disableButton();
     this.#addNewPointPresenter.init();
   };
 
   #renderRoute() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.#error) {
+      this.#renderError(this.#error);
+      return;
+    }
+
     if(this.points.length === 0) {
       this.#renderEmptyPointList();
       return;
@@ -125,6 +147,15 @@ class RoutePresenter {
     render(this.#emptyPointListComponent, this.#contentContainer);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderError(error) {
+    const errorComponent = new MessageView(error);
+    render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
+  }
+
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
@@ -149,38 +180,39 @@ class RoutePresenter {
     this.#sortPresenter.destroy();
   }
 
-  #normalizePoints(points) {
-    return points.map((point) => {
-      const destination = typeof point.destination === 'string'
-        ? this.#destinationsModel.getDestinationById(point.destination)
-        : point.destination;
+  #handleViewAction = async (actionType, updateType, updatedPoint) => {
+    this.#uiBlocker.block();
 
-      const offers = point.offers[0]?.id
-        ? point.offers
-        : point.offers
-          .map((offerId) => this.#offersModel.getOfferById(offerId))
-          .filter(Boolean);
-
-      return {
-        ...point,
-        destination,
-        offers
-      };
-    });
-  }
-
-  #handleViewAction = (actionType, updateType, updatedPoint) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#routeModel.updatePoint(updateType, updatedPoint);
+        this.#pointPresenters.get(updatedPoint.id).setSaving();
+        try {
+          await this.#routeModel.updatePoint(updateType, updatedPoint);
+        } catch {
+          this.#pointPresenters.get(updatedPoint.id).setAborting();
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#routeModel.addPoint(updateType, updatedPoint);
+        this.#addNewPointPresenter.setSaving();
+        try {
+          await this.#routeModel.addPoint(updateType, updatedPoint);
+        } catch(err) {
+          this.#addNewPointPresenter.setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#routeModel.deletePoint(updateType, updatedPoint);
+        this.#pointPresenters.get(updatedPoint.id).setDeleting();
+        try {
+          await this.#routeModel.deletePoint(updateType, updatedPoint);
+        } catch {
+          this.#pointPresenters.get(updatedPoint.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -188,12 +220,28 @@ class RoutePresenter {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
+
       case UpdateType.MINOR:
         this.#clearRoute();
         this.#renderRoute();
         break;
+
       case UpdateType.MAJOR:
         this.#clearRoute(true);
+        this.#renderRoute();
+        break;
+
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderRoute();
+        break;
+
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        this.#error = data;
+        remove(this.#loadingComponent);
+        this.#clearRoute();
         this.#renderRoute();
         break;
     }
