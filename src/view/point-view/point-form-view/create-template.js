@@ -107,11 +107,19 @@ const createHeaderTemplate = ({
   place,
   availableDestinations,
   selectedType,
-  mode
+  mode,
+  isSaving,
+  isDeleting,
+  isDisabled
 }) => {
   const isEditing = mode === pointMode.EDIT;
-  const resetButtonText = isEditing ? 'Delete' : 'Cancel';
+  let resetButtonText = 'Cancel';
 
+  if (isEditing && isDeleting) {
+    resetButtonText = 'Deleting...';
+  } else if (isEditing) {
+    resetButtonText = 'Delete';
+  }
 
   return (
     `<header class="event__header">
@@ -120,8 +128,17 @@ const createHeaderTemplate = ({
       ${createEventTimeTemplate(dateFrom, dateTo)}
       ${createEventPriceTemplate(basePrice)}
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${resetButtonText}</button>
+      <button
+        class="event__save-btn  btn  btn--blue"
+        type="submit"
+        ${isDisabled ? 'disabled' : ''}
+      >${isSaving ? 'Saving...' : 'Save'}</button>
+
+      <button
+        class="event__reset-btn"
+        type="reset"
+        ${isDisabled ? 'disabled' : ''}
+      >${resetButtonText}</button>
       ${isEditing
       ? `<button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -198,7 +215,10 @@ const createTemplate = (state, availableDestinations, mode) => {
     dateFrom,
     dateTo,
     type,
-    selectedType
+    selectedType,
+    isSaving,
+    isDeleting,
+    isDisabled
   } = state;
 
   return (
@@ -211,7 +231,10 @@ const createTemplate = (state, availableDestinations, mode) => {
       availableDestinations,
       place: destination?.name || '',
       selectedType,
-      mode
+      mode,
+      isSaving,
+      isDeleting,
+      isDisabled
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}

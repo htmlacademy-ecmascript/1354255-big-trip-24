@@ -100,11 +100,6 @@ class RoutePresenter {
       return;
     }
 
-    if (this.#error) {
-      this.#renderError(this.#error);
-      return;
-    }
-
     if(this.points.length === 0) {
       this.#renderEmptyPointList();
       return;
@@ -151,8 +146,8 @@ class RoutePresenter {
     render(this.#loadingComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #renderError(error) {
-    const errorComponent = new MessageView(error);
+  #renderError() {
+    const errorComponent = new MessageView(this.#error);
     render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
@@ -252,7 +247,7 @@ class RoutePresenter {
         this.#error = data;
         remove(this.#loadingComponent);
         this.#clearRoute();
-        this.#renderRoute();
+        this.#renderError();
         break;
     }
   };

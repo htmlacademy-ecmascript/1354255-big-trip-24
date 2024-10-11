@@ -35,7 +35,7 @@ class RouteModel extends Observable {
       this.#points = [];
 
       this._notify(UpdateType.ERROR, err);
-      throw err;
+      throw new Error(err);
     }
   }
 
@@ -54,8 +54,7 @@ class RouteModel extends Observable {
 
       this._notify(updateType, adaptedPoint);
     } catch(err) {
-      this._notify(UpdateType.ERROR, PointErrorMessage.UPDATE);
-      throw err;
+      throw new Error(PointErrorMessage.UPDATE);
     }
   }
 
@@ -68,8 +67,7 @@ class RouteModel extends Observable {
 
       this._notify(updateType, newPoint);
     } catch(err) {
-      this._notify(UpdateType.ERROR, PointErrorMessage.ADD);
-      throw err;
+      throw new Error(PointErrorMessage.ADD);
     }
   }
 
@@ -77,7 +75,7 @@ class RouteModel extends Observable {
     const index = this.#points.findIndex((point) => point.id === updatedPoint.id);
 
     if (index === -1) {
-      this._notify(UpdateType.ERROR, PointErrorMessage.DELETE_UNEXISTING);
+      throw new Error(PointErrorMessage.DELETE_UNEXISTING);
     }
 
     try {
@@ -87,8 +85,7 @@ class RouteModel extends Observable {
 
       this._notify(updateType);
     } catch(err) {
-      this._notify(UpdateType.ERROR, PointErrorMessage.DELETE);
-      throw err;
+      throw new Error(PointErrorMessage.DELETE);
     }
   }
 }

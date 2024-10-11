@@ -81,8 +81,6 @@ class AddNewPointPresenter {
       UpdateType.MINOR,
       point
     );
-
-    this.destroy();
   };
 
   #escKeyDownHandler = (evt) => {

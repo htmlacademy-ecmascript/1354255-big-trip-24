@@ -69,7 +69,8 @@ class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -101,7 +102,7 @@ class PointPresenter {
 
   setAborting = () => {
     if (this.#mode === Mode.DEFAULT) {
-      this.#pointEditComponent.shake();
+      this.#pointComponent.shake();
       return;
     }
 
@@ -147,7 +148,7 @@ class PointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.#replaceFormToPoint();
+
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
