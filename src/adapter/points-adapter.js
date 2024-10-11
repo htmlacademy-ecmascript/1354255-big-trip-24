@@ -31,7 +31,7 @@ class PointsAdapter {
   adaptToServer(point) {
     const adaptedPoint = {
       ...point,
-      destination: point.destination?.id || this.#destinationsModel.destinations[0].id,
+      destination: point.destination?.id,
       offers: point.offers.map((offer) => offer.id),
       'base_price':  point.basePrice,
       'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : point.dateFrom,

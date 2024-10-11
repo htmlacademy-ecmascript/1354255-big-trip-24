@@ -198,7 +198,7 @@ class PointFormView extends AbstractStatefulView {
       return;
     }
 
-    const basePrice = evt.target.valueAsNumber;
+    const basePrice = evt.target.value;
 
     this.updateElement({
       ...this._state,
