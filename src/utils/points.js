@@ -108,12 +108,19 @@ const createOfferSlug = (title) => title
   .slice(0, 2)
   .join('-');
 
+const getCheckedOffers = (allOffers, checkedOffersIds) =>
+  allOffers.map((offer) => ({
+    ...offer,
+    isChecked: checkedOffersIds.includes(offer.id)
+  }));
+
 export {
   createDefaultPointDateFrom,
   createDefaultPointDateTo,
   createOfferSlug,
   formatEditPointDate,
   formatPointDate,
+  getCheckedOffers,
   getTimeDifference,
   getTimeFromDate,
   isFuturePoint,

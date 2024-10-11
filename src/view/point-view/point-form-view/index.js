@@ -91,6 +91,7 @@ class PointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationSelectHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
+    this.element.addEventListener('change', this.#offersListHandler);
 
     if (this.#mode === pointMode.EDIT) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
@@ -202,6 +203,27 @@ class PointFormView extends AbstractStatefulView {
     this.updateElement({
       ...this._state,
       basePrice,
+    });
+  };
+
+  #offersListHandler = (evt) => {
+    evt.preventDefault();
+
+    if (!evt.target.closest('.event__offer-selector')) {
+      return;
+    }
+
+    const offers = this._state.offers.map((offer) => {
+      if (offer.id === evt.target.id) {
+        return { ...offer, isChecked: !offer.isChecked };
+      }
+
+      return offer;
+    });
+
+    this.updateElement({
+      ...this._state,
+      offers,
     });
   };
 

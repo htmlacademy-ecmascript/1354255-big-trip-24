@@ -156,15 +156,16 @@ const createOffersSectionTemplate = (offers) => {
     return '';
   }
 
-  const offersTemplate = offers.map(({ title, price }) => (
+  const offersTemplate = offers.map(({ id, title, price, isChecked }) => (
     `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
-        id="event-offer-${createOfferSlug(title)}-1"
+        id="${id}"
         type="checkbox"
         name="event-offer-${createOfferSlug(title)}"
+        ${isChecked ? 'checked' : ''}
       >
-      <label class="event__offer-label" for="event-offer-${createOfferSlug(title)}-1">
+      <label class="event__offer-label" for="${id}">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
         <span class="event__offer-price">${price}</span>

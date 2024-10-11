@@ -1,4 +1,4 @@
-import { parseDate } from '@/utils';
+import { getCheckedOffers, parseDate } from '@/utils';
 
 class PointsAdapter {
   #destinationsModel = null;
@@ -17,7 +17,7 @@ class PointsAdapter {
       dateTo: parseDate(point, 'date_to'),
       isFavorite: point['is_favorite'],
       destination: this.#destinationsModel.getDestinationById(point.destination),
-      offers: this.#offersModel.getOffersByPointType(point.type)
+      offers: getCheckedOffers(this.#offersModel.getOffersByPointType(point.type), point.offers)
     };
 
     delete adaptedPoint['base_price'];

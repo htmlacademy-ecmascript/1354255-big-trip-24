@@ -78,6 +78,8 @@ const createTemplate = (point) => {
     isFavorite
   } = point;
 
+  const checkedOffers = offers.filter((offer) => offer.isChecked);
+
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -85,7 +87,7 @@ const createTemplate = (point) => {
         ${createPlaceTemplate(type, destination?.name)}
         ${createScheduleTemplate(dateFrom, dateTo)}
         ${createPriceTemplate(basePrice)}
-        ${createOffersTemplate(offers)}
+        ${createOffersTemplate(checkedOffers)}
         ${createFavoriteButtonTemplate(isFavorite)}
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
