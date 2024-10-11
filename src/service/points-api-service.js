@@ -3,9 +3,9 @@ import ApiService from '@/framework/api-service';
 import { ApiEndpoint, Method } from '@/utils';
 
 class PointsApiService extends ApiService {
-  #adapter = null;
-
   #url = ApiEndpoint.POINTS;
+
+  #adapter = null;
 
   constructor(endpoint, authorization, adapter) {
     super(endpoint, authorization);

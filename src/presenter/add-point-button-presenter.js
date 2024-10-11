@@ -1,8 +1,10 @@
 import { render } from '@/framework/render';
+
 import AddPointButtonView from '@/view/add-point-button-view';
 
 class AddPointButtonPresenter {
   #buttonComponent = null;
+
   #handleButtonClick = null;
 
   init({ onButtonClick }) {

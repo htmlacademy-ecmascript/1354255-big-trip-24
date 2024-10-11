@@ -3,8 +3,6 @@ import flatpickr from 'flatpickr';
 import AbstractStatefulView from '@/framework/view/abstract-stateful-view';
 
 import {
-  createDefaultPointDateFrom,
-  createDefaultPointDateTo,
   isValidPrice,
   pointMode,
   PointType
@@ -14,16 +12,17 @@ import { createTemplate } from './create-template';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const DEFAULT_POINT = {
-  basePrice: 100,
-  dateFrom: createDefaultPointDateFrom(),
-  dateTo: createDefaultPointDateTo(),
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
   destination: null,
   isFavorite: false,
   offers: [],
-  type: PointType.BUS
+  type: PointType.FLIGHT
 };
 
 class PointFormView extends AbstractStatefulView {
+  #mode = pointMode.EDIT;
   #datepickerStart = null;
   #datepickerEnd = null;
 
@@ -33,8 +32,6 @@ class PointFormView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleCloseClick = null;
   #handleResetClick = null;
-
-  #mode = pointMode.EDIT;
 
   constructor({
     point = DEFAULT_POINT,
@@ -77,15 +74,15 @@ class PointFormView extends AbstractStatefulView {
     }
   }
 
-  _restoreHandlers() {
-    this.#setEventListeners();
-    this.#setDatePickers();
-  }
-
   reset(point) {
     this.updateElement(
       PointFormView.parsePointToState(point),
     );
+  }
+
+  _restoreHandlers() {
+    this.#setEventListeners();
+    this.#setDatePickers();
   }
 
   #setEventListeners() {

@@ -4,7 +4,7 @@ class ControlsView extends AbstractView {
   _items = [];
   _handleItemChange = null;
 
-  constructor ({
+  constructor({
     items,
     onItemChange
   }) {

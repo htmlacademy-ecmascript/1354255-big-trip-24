@@ -1,3 +1,5 @@
+import he from 'he';
+
 import {
   PointType,
   capitalizeFirstLetter,
@@ -61,7 +63,7 @@ const createEventDestinationTemplate = (type, place, availableDestinations) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${place || availableDestinations[0]}"
+        value="${he.encode(place)}"
         list="destination-list-1">
       <datalist id="destination-list-1">
         ${destinationsList}
@@ -95,7 +97,7 @@ const createEventPriceTemplate = (price) => (
     <span class="visually-hidden">Price</span>
       €
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(price))}">
   </div>`
 );
 
@@ -107,11 +109,19 @@ const createHeaderTemplate = ({
   place,
   availableDestinations,
   selectedType,
-  mode
+  mode,
+  isSaving,
+  isDeleting,
+  isDisabled
 }) => {
   const isEditing = mode === pointMode.EDIT;
-  const resetButtonText = isEditing ? 'Delete' : 'Cancel';
+  let resetButtonText = 'Cancel';
 
+  if (isEditing && isDeleting) {
+    resetButtonText = 'Deleting...';
+  } else if (isEditing) {
+    resetButtonText = 'Delete';
+  }
 
   return (
     `<header class="event__header">
@@ -120,8 +130,17 @@ const createHeaderTemplate = ({
       ${createEventTimeTemplate(dateFrom, dateTo)}
       ${createEventPriceTemplate(basePrice)}
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${resetButtonText}</button>
+      <button
+        class="event__save-btn  btn  btn--blue"
+        type="submit"
+        ${isDisabled ? 'disabled' : ''}
+      >${isSaving ? 'Saving...' : 'Save'}</button>
+
+      <button
+        class="event__reset-btn"
+        type="reset"
+        ${isDisabled ? 'disabled' : ''}
+      >${resetButtonText}</button>
       ${isEditing
       ? `<button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -198,7 +217,10 @@ const createTemplate = (state, availableDestinations, mode) => {
     dateFrom,
     dateTo,
     type,
-    selectedType
+    selectedType,
+    isSaving,
+    isDeleting,
+    isDisabled
   } = state;
 
   return (
@@ -211,7 +233,10 @@ const createTemplate = (state, availableDestinations, mode) => {
       availableDestinations,
       place: destination?.name || '',
       selectedType,
-      mode
+      mode,
+      isSaving,
+      isDeleting,
+      isDisabled
     })}
       <section class="event__details">
         ${createOffersSectionTemplate(offers)}

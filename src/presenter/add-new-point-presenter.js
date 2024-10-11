@@ -67,13 +67,20 @@ class AddNewPointPresenter {
     this.#addPointComponent.shake(this.#resetFormState);
   };
 
+  #resetFormState = () => {
+    this.#addPointComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
+  };
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange (
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       point
     );
-    this.destroy();
   };
 
   #escKeyDownHandler = (evt) => {
@@ -85,14 +92,6 @@ class AddNewPointPresenter {
 
   #cancelClickHandler = () => {
     this.destroy();
-  };
-
-  #resetFormState = () => {
-    this.#addPointComponent.updateElement({
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    });
   };
 }
 

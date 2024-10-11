@@ -69,7 +69,8 @@ class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -101,7 +102,7 @@ class PointPresenter {
 
   setAborting = () => {
     if (this.#mode === Mode.DEFAULT) {
-      this.#pointEditComponent.shake();
+      this.#pointComponent.shake();
       return;
     }
 
@@ -113,15 +114,6 @@ class PointPresenter {
       isDisabled: true,
       isDeleting: true,
     });
-  };
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#replaceFormToPoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-    }
   };
 
   #replaceFormToPoint() {
@@ -137,6 +129,14 @@ class PointPresenter {
     this.#mode = Mode.EDITING;
   }
 
+  #resetFormState = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    });
+  };
+
   #handleEditClick = () => {
     this.#replacePointToForm();
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -148,7 +148,7 @@ class PointPresenter {
       UpdateType.MINOR,
       point,
     );
-    this.#replaceFormToPoint();
+
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
@@ -173,12 +173,13 @@ class PointPresenter {
     );
   };
 
-  #resetFormState = () => {
-    this.#pointEditComponent.updateElement({
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    });
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
+      this.#replaceFormToPoint();
+      document.removeEventListener('keydown', this.#escKeyDownHandler);
+    }
   };
 }
 
