@@ -1,3 +1,6 @@
+const AUTHORIZATION = 'Basic dXNlcjpwb2xsb2w=';
+const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+
 const PointType = Object.freeze({
   TAXI: 'taxi',
   BUS: 'bus',
@@ -74,7 +77,9 @@ const PointErrorMessage = Object.freeze({
 });
 
 export {
+  AUTHORIZATION,
   ApiEndpoint,
+  END_POINT,
   EmptyFilterMessage,
   FilterType,
   MessageOnLoading,

@@ -9,9 +9,7 @@ import RoutePresenter from '@/presenter/route-presenter';
 import DestinationsApiService from '@/service/destinations-api-service';
 import OffersApiService from '@/service/offers-api-service';
 import PointsApiService from '@/service/points-api-service';
-
-const AUTHORIZATION = 'Basic dXNlcjpwb2xsb2w=';
-const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+import { AUTHORIZATION, END_POINT } from '@/utils';
 
 const destinationsApiService = new DestinationsApiService(END_POINT, AUTHORIZATION);
 const offersApiService = new OffersApiService(END_POINT, AUTHORIZATION);
