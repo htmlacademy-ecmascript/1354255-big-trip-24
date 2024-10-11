@@ -14,7 +14,6 @@ class FiltersPresenter {
     this.#routeModel = routeModel;
     this.#filtersModel = filtersModel;
 
-
     this.#filtersModel.addObserver(this.#handleModelEvent);
     this.#routeModel.addObserver(this.#handleModelEvent);
   }

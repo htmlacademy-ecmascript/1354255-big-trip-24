@@ -1,5 +1,12 @@
 const AUTHORIZATION = 'Basic dXNlcjpwb2xsb2w=';
+
 const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+
+const DESTINATIONS_TO_SHOW = 3;
+
+const SEPARATOR_SYMBOL = '&nbsp;&mdash;&nbsp;';
+
+const ELLIPSES_SYMBOL = '&hellip;';
 
 const PointType = Object.freeze({
   TAXI: 'taxi',
@@ -79,14 +86,15 @@ const PointErrorMessage = Object.freeze({
 export {
   AUTHORIZATION,
   ApiEndpoint,
+  DESTINATIONS_TO_SHOW,
+  ELLIPSES_SYMBOL,
   END_POINT,
   EmptyFilterMessage,
   FilterType,
   MessageOnLoading,
   Method,
   PointErrorMessage,
-  PointType,
-  Sort,
+  PointType, SEPARATOR_SYMBOL, Sort,
   UpdateType,
   UserAction
 };

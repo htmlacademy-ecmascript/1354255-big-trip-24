@@ -84,8 +84,6 @@ class RoutePresenter {
       onDataChange: this.#handleViewAction,
       onDestroy: this.#addPointDestroyHandler
     });
-
-    this.#renderRoute();
   }
 
   addPointButtonClickHandler = () => {

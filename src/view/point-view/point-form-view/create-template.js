@@ -1,10 +1,11 @@
 import he from 'he';
 
 import {
+  DateTimeFormat,
   PointType,
   capitalizeFirstLetter,
   createOfferSlug,
-  formatEditPointDate,
+  formatDate,
   pointMode
 } from '@/utils';
 
@@ -80,14 +81,14 @@ const createEventTimeTemplate = (dateFrom, dateTo) => (
       id="event-start-time-1"
       type="text"
       name="event-start-time"
-      value="${formatEditPointDate(dateFrom)}">
+      value="${formatDate(dateFrom, DateTimeFormat.EDIT_POINT)}">
     —
     <label class="visually-hidden" for="event-end-time-1">To</label>
     <input
       class="event__input  event__input--time"
       id="event-end-time-1"
       type="text" name="event-end-time"
-      value="${formatEditPointDate(dateTo)}">
+      value="${formatDate(dateTo, DateTimeFormat.EDIT_POINT)}">
   </div>`
 );
 
