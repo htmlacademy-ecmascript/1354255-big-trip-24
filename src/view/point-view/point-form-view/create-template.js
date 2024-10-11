@@ -1,3 +1,5 @@
+import he from 'he';
+
 import {
   PointType,
   capitalizeFirstLetter,
@@ -61,7 +63,7 @@ const createEventDestinationTemplate = (type, place, availableDestinations) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${place || availableDestinations[0]}"
+        value="${he.encode(place)}"
         list="destination-list-1">
       <datalist id="destination-list-1">
         ${destinationsList}
@@ -95,7 +97,7 @@ const createEventPriceTemplate = (price) => (
     <span class="visually-hidden">Price</span>
       €
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(String(price))}">
   </div>`
 );
 

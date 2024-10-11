@@ -3,8 +3,6 @@ import flatpickr from 'flatpickr';
 import AbstractStatefulView from '@/framework/view/abstract-stateful-view';
 
 import {
-  createDefaultPointDateFrom,
-  createDefaultPointDateTo,
   isValidPrice,
   pointMode,
   PointType
@@ -14,13 +12,13 @@ import { createTemplate } from './create-template';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const DEFAULT_POINT = {
-  basePrice: 100,
-  dateFrom: createDefaultPointDateFrom(),
-  dateTo: createDefaultPointDateTo(),
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
   destination: null,
   isFavorite: false,
   offers: [],
-  type: PointType.BUS
+  type: PointType.FLIGHT
 };
 
 class PointFormView extends AbstractStatefulView {
