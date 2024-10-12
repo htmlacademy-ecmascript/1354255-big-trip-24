@@ -6,12 +6,12 @@ import RouteModel from '@/model/route-model';
 import AddPointButtonPresenter from '@/presenter/add-point-button-presenter';
 import FiltersPresenter from '@/presenter/filters-presenter';
 import RoutePresenter from '@/presenter/route-presenter';
+import TripInfoPresenter from '@/presenter/trip-info-presenter';
 import DestinationsApiService from '@/service/destinations-api-service';
 import OffersApiService from '@/service/offers-api-service';
 import PointsApiService from '@/service/points-api-service';
 
-const AUTHORIZATION = 'Basic dXNlcjpwb2xsb2w=';
-const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
+import { AUTHORIZATION, END_POINT } from '@/utils';
 
 const destinationsApiService = new DestinationsApiService(END_POINT, AUTHORIZATION);
 const offersApiService = new OffersApiService(END_POINT, AUTHORIZATION);
@@ -48,19 +48,27 @@ const routePresenter = new RoutePresenter({
   addPointButtonPresenter
 });
 
+const tripInfoPresenter = new TripInfoPresenter({
+  routeModel
+});
+
 class AppPresenter {
   init() {
-    routeModel.init({
-      loadAdditionalInfo: () => Promise.all([destinationsModel.init(), offersModel.init()])
-    })
+    filtersPresenter.init();
+    routePresenter.init();
+
+    Promise.all([
+      routeModel.init(),
+      destinationsModel.init(),
+      offersModel.init()
+    ])
       .finally(() => {
         addPointButtonPresenter.init({
           onButtonClick: routePresenter.addPointButtonClickHandler
         });
       });
 
-    filtersPresenter.init();
-    routePresenter.init();
+    tripInfoPresenter.init();
   }
 }
 

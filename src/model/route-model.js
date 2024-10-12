@@ -4,7 +4,8 @@ import {
   deleteItem,
   PointErrorMessage,
   updateItem,
-  UpdateType
+  UpdateType,
+  MessageOnLoading
 } from '@/utils';
 
 class RouteModel extends Observable {
@@ -23,10 +24,8 @@ class RouteModel extends Observable {
     return this.#points;
   }
 
-  async init({ loadAdditionalInfo }) {
+  async init() {
     try {
-      await loadAdditionalInfo();
-
       const points = await this.#service.points;
       this.#points = points.map(this.#adapter.adaptToClient);
 
@@ -35,7 +34,7 @@ class RouteModel extends Observable {
       this.#points = [];
 
       this._notify(UpdateType.ERROR, err);
-      throw new Error(err);
+      throw new Error(MessageOnLoading.FAILED);
     }
   }
 

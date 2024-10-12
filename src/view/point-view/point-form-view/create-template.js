@@ -1,10 +1,11 @@
 import he from 'he';
 
 import {
+  DateTimeFormat,
   PointType,
   capitalizeFirstLetter,
   createOfferSlug,
-  formatEditPointDate,
+  formatDate,
   pointMode
 } from '@/utils';
 
@@ -80,14 +81,14 @@ const createEventTimeTemplate = (dateFrom, dateTo) => (
       id="event-start-time-1"
       type="text"
       name="event-start-time"
-      value="${formatEditPointDate(dateFrom)}">
+      value="${formatDate(dateFrom, DateTimeFormat.EDIT_POINT)}">
     —
     <label class="visually-hidden" for="event-end-time-1">To</label>
     <input
       class="event__input  event__input--time"
       id="event-end-time-1"
       type="text" name="event-end-time"
-      value="${formatEditPointDate(dateTo)}">
+      value="${formatDate(dateTo, DateTimeFormat.EDIT_POINT)}">
   </div>`
 );
 
@@ -156,15 +157,16 @@ const createOffersSectionTemplate = (offers) => {
     return '';
   }
 
-  const offersTemplate = offers.map(({ title, price }) => (
+  const offersTemplate = offers.map(({ id, title, price, isChecked }) => (
     `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
-        id="event-offer-${createOfferSlug(title)}-1"
+        id="${id}"
         type="checkbox"
         name="event-offer-${createOfferSlug(title)}"
+        ${isChecked ? 'checked' : ''}
       >
-      <label class="event__offer-label" for="event-offer-${createOfferSlug(title)}-1">
+      <label class="event__offer-label" for="${id}">
         <span class="event__offer-title">${title}</span>
         +€&nbsp;
         <span class="event__offer-price">${price}</span>

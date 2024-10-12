@@ -1,6 +1,8 @@
-import { remove, render } from '@/framework/render';
-import { Sort } from '@/utils';
+import { remove, render, replace } from '@/framework/render';
+
 import SortView from '@/view/sort-view';
+
+import { Sort } from '@/utils';
 
 class SortPresenter {
   #sort = [];
@@ -20,12 +22,19 @@ class SortPresenter {
   }
 
   init() {
+    const prevSortComponent = this.#sortComponent;
+
     this.#sortComponent = new SortView({
       items: this.#sort,
       onItemChange: this.#sortTypesChangeHandler,
     });
 
-    render(this.#sortComponent, this.#container);
+    if (prevSortComponent) {
+      replace(this.#sortComponent, prevSortComponent);
+      remove(prevSortComponent);
+    } else {
+      render(this.#sortComponent, this.#container);
+    }
   }
 
   destroy() {

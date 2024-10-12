@@ -21,7 +21,8 @@ const DateTimeFormat = {
   TIME: 'HH:mm',
   DAYS_DURATION: 'DD[D] HH[H] mm[M]',
   HOURS_DURATION: 'HH[H] mm[M]',
-  MINUTES_DURATION: 'mm[M]'
+  MINUTES_DURATION: 'mm[M]',
+  TRIP: 'D MMM'
 };
 
 const pointMode = {
@@ -29,17 +30,7 @@ const pointMode = {
   EDIT: 'edit'
 };
 
-const now = dayjs();
-
-const createDefaultPointDateFrom = () => now.utc().format();
-
-const createDefaultPointDateTo = () => now.add(1, 'hour').utc().format();
-
-const formatPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.DEFAULT) : '';
-
-const formatEditPointDate = (date) => date ? dayjs(date).format(DateTimeFormat.EDIT_POINT) : '';
-
-const getTimeFromDate = (date) => date ? dayjs(date).format(DateTimeFormat.TIME) : '';
+const formatDate = (date, format = DateTimeFormat.DEFAULT) => date ? dayjs(date).format(format) : '';
 
 const getTimeDifference = (dateFrom, dateTo) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
@@ -108,14 +99,26 @@ const createOfferSlug = (title) => title
   .slice(0, 2)
   .join('-');
 
+const getCheckedOffers = (allOffers, checkedOffersIds) =>
+  allOffers.map((offer) => ({
+    ...offer,
+    isChecked: checkedOffersIds.includes(offer.id)
+  }));
+
+const getOffersCost = (offers) => offers.reduce((acc, offer) => {
+  if (offer.isChecked) {
+    acc += offer.price;
+  }
+  return acc;
+}, 0);
+
 export {
-  createDefaultPointDateFrom,
-  createDefaultPointDateTo,
   createOfferSlug,
-  formatEditPointDate,
-  formatPointDate,
+  DateTimeFormat,
+  formatDate,
+  getCheckedOffers,
+  getOffersCost,
   getTimeDifference,
-  getTimeFromDate,
   isFuturePoint,
   isPastPoint,
   isPresentPoint,

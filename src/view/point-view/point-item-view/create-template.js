@@ -1,12 +1,12 @@
 import {
   capitalizeFirstLetter,
-  formatPointDate,
-  getTimeDifference,
-  getTimeFromDate
+  DateTimeFormat,
+  formatDate,
+  getTimeDifference
 } from '@/utils';
 
 const createDateTemplate = (dateFrom) =>
-  `<time class="event__date" datetime="${dateFrom}">${formatPointDate(dateFrom)}</time>`;
+  `<time class="event__date" datetime="${dateFrom}">${formatDate(dateFrom)}</time>`;
 
 const createPlaceTemplate = (type, city) => (
   `<div class="event__type">
@@ -19,9 +19,9 @@ const createPlaceTemplate = (type, city) => (
 const createScheduleTemplate = (dateFrom, dateTo) => (
   `<div class="event__schedule">
     <p class="event__time">
-      <time class="event__start-time" datetime="${dateFrom}">${getTimeFromDate(dateFrom)}</time>
+      <time class="event__start-time" datetime="${dateFrom}">${formatDate(dateFrom, DateTimeFormat.TIME)}</time>
         —
-      <time class="event__end-time" datetime="${dateTo}">${getTimeFromDate(dateTo)}</time>
+      <time class="event__end-time" datetime="${dateTo}">${formatDate(dateTo, DateTimeFormat.TIME)}</time>
     </p>
     <p class="event__duration">${getTimeDifference(dateFrom, dateTo)}</p>
   </div>`
@@ -78,6 +78,8 @@ const createTemplate = (point) => {
     isFavorite
   } = point;
 
+  const checkedOffers = offers.filter((offer) => offer.isChecked);
+
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -85,7 +87,7 @@ const createTemplate = (point) => {
         ${createPlaceTemplate(type, destination?.name)}
         ${createScheduleTemplate(dateFrom, dateTo)}
         ${createPriceTemplate(basePrice)}
-        ${createOffersTemplate(offers)}
+        ${createOffersTemplate(checkedOffers)}
         ${createFavoriteButtonTemplate(isFavorite)}
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>

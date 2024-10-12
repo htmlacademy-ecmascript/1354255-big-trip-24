@@ -5,7 +5,6 @@ class DestinationsModel {
 
   constructor(service) {
     this.#service = service;
-    this.#destinations = this.#service.destinations;
   }
 
   get destinations() {

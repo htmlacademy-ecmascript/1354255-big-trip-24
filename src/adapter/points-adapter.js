@@ -1,4 +1,4 @@
-import { parseDate } from '@/utils';
+import { getCheckedOffers, parseDate } from '@/utils';
 
 class PointsAdapter {
   #destinationsModel = null;
@@ -17,7 +17,7 @@ class PointsAdapter {
       dateTo: parseDate(point, 'date_to'),
       isFavorite: point['is_favorite'],
       destination: this.#destinationsModel.getDestinationById(point.destination),
-      offers: this.#offersModel.getOffersByPointType(point.type)
+      offers: getCheckedOffers(this.#offersModel.getOffersByPointType(point.type), point.offers)
     };
 
     delete adaptedPoint['base_price'];
@@ -31,9 +31,9 @@ class PointsAdapter {
   adaptToServer(point) {
     const adaptedPoint = {
       ...point,
-      destination: point.destination?.id || this.#destinationsModel.destinations[0].id,
-      offers: point.offers.map((offer) => offer.id),
-      'base_price':  point.basePrice,
+      destination: point.destination?.id,
+      offers: point.offers.filter((offer) => offer.isChecked).map((offer) => offer.id),
+      'base_price':  parseInt(point.basePrice, 10),
       'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : point.dateFrom,
       'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : point.dateTo,
       'is_favorite': point.isFavorite,
@@ -43,6 +43,7 @@ class PointsAdapter {
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;
     delete adaptedPoint.isFavorite;
+    delete adaptedPoint.name;
 
     return adaptedPoint;
   }
