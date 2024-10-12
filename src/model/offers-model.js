@@ -5,7 +5,6 @@ class OffersModel {
 
   constructor(service) {
     this.#service = service;
-    this.#offers = this.#service.offers;
   }
 
   get offers() {

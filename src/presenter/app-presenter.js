@@ -53,10 +53,15 @@ const tripInfoPresenter = new TripInfoPresenter({
 });
 
 class AppPresenter {
-  async init() {
-    await routeModel.init({
-      loadAdditionalInfo: () => Promise.all([destinationsModel.init(), offersModel.init()])
-    })
+  init() {
+    filtersPresenter.init();
+    routePresenter.init();
+
+    Promise.all([
+      routeModel.init(),
+      destinationsModel.init(),
+      offersModel.init()
+    ])
       .finally(() => {
         addPointButtonPresenter.init({
           onButtonClick: routePresenter.addPointButtonClickHandler
@@ -64,8 +69,6 @@ class AppPresenter {
       });
 
     tripInfoPresenter.init();
-    filtersPresenter.init();
-    routePresenter.init();
   }
 }
 

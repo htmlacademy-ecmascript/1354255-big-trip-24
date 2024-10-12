@@ -12,8 +12,6 @@ import {
 } from '@/utils';
 
 class TripInfoPresenter {
-  #points = [];
-
   #routeModel = null;
 
   #tripInfoComponent = null;
@@ -25,7 +23,7 @@ class TripInfoPresenter {
   }
 
   get #route() {
-    const destinationNames = this.#routeModel.points.map((point) => point.destination.name);
+    const destinationNames = this.#routeModel.points.map((point) => point.destination?.name).filter(Boolean);
 
     const route = destinationNames.length > DESTINATIONS_TO_SHOW
       ? [destinationNames.at(0), ELLIPSES_SYMBOL, destinationNames.at(-1)]
@@ -49,6 +47,10 @@ class TripInfoPresenter {
   }
 
   init() {
+    if (!this.#routeModel.points.length) {
+      return;
+    }
+
     const container = document.querySelector('.trip-main');
     const prevTripInfoComponent = this.#tripInfoComponent;
 
