@@ -71,6 +71,8 @@ function getWeightForNullDate(dateA, dateB) {
   return null;
 }
 
+const sortByDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+
 const sortByTime = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
 
@@ -86,7 +88,7 @@ const sortPointsByType = (points, sortType) => {
     case Sort.PRICE:
       return points.toSorted(sortByPrice);
     default:
-      return [...points];
+      return points.toSorted(sortByDate);
   }
 };
 
@@ -124,7 +126,5 @@ export {
   isPresentPoint,
   parseDate,
   pointMode,
-  sortByPrice,
-  sortByTime,
-  sortPointsByType
+  sortPointsByType,
 };
