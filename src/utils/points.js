@@ -48,12 +48,13 @@ const getTimeDifference = (dateFrom, dateTo) => {
   }
 };
 
-const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'minute');
+const isFuturePoint = ({ dateFrom }) => dayjs(dateFrom).isAfter(dayjs(), 'D');
 
-const isPresentPoint = ({ dateTo }) => dayjs(dateTo) && dayjs().isAfter(dayjs(dateTo), 'millisecond');
+const isPresentPoint = ({ dateFrom, dateTo }) =>
+  (dayjs(dateFrom).isBefore(dayjs(), 'D') || dayjs(dateFrom).isSame(dayjs(), 'D'))
+  && (dayjs(dateTo).isAfter(dayjs(), 'D') || dayjs(dateTo).isSame(dayjs(), 'D'));
 
-const isPastPoint = ({ dateFrom, dateTo }) =>
-  dateTo && (dayjs().isSame(dayjs(dateFrom), 'minute') || dayjs().isAfter(dateTo, 'minute'));
+const isPastPoint = ({ dateTo }) => dayjs(dateTo).isBefore(dayjs(), 'D');
 
 function getWeightForNullDate(dateA, dateB) {
   if (dateA === null && dateB === null) {
