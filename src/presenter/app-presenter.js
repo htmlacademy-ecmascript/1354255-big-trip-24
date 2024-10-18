@@ -58,10 +58,12 @@ class AppPresenter {
     routePresenter.init();
 
     Promise.all([
-      routeModel.init(),
       destinationsModel.init(),
       offersModel.init()
     ])
+      .then(() => {
+        routeModel.init();
+      })
       .finally(() => {
         addPointButtonPresenter.init({
           onButtonClick: routePresenter.addPointButtonClickHandler
