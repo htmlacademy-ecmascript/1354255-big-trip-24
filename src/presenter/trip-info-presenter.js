@@ -15,11 +15,15 @@ import {
 
 class TripInfoPresenter {
   #routeModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
 
   #tripInfoComponent = null;
 
-  constructor({ routeModel }) {
+  constructor({ routeModel, destinationsModel, offersModel }) {
     this.#routeModel = routeModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
 
     this.#routeModel.addObserver(this.#handleModelEvent);
   }
@@ -30,7 +34,7 @@ class TripInfoPresenter {
 
   get #route() {
     const destinationNames = this.#points
-      .map((point) => point.destination?.name)
+      .map((point) => this.#destinationsModel.getDestinationById(point.destination)?.name)
       .filter(Boolean);
 
     const route = destinationNames.length > DESTINATIONS_TO_SHOW
@@ -49,7 +53,7 @@ class TripInfoPresenter {
 
   get #cost() {
     return this.#points.reduce((acc, point) => {
-      acc += (+point.basePrice + getOffersCost(point.offers));
+      acc += (+point.basePrice + getOffersCost(this.#offersModel.getCheckedOffers(point)));
       return acc;
     }, 0);
   }

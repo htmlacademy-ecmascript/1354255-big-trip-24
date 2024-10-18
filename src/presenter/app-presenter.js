@@ -39,7 +39,9 @@ const routePresenter = new RoutePresenter({
 });
 
 const tripInfoPresenter = new TripInfoPresenter({
-  routeModel
+  routeModel,
+  destinationsModel,
+  offersModel
 });
 
 class AppPresenter {
