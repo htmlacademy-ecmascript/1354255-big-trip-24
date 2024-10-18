@@ -25,6 +25,16 @@ class OffersModel {
 
     return existingOffer.offers;
   }
+
+  getCheckedOffers(point) {
+    const allOffers = this.getOffersByPointType(point.type);
+    const checkedOffersIds = [...point.offers];
+
+    return allOffers.map((offer) => ({
+      ...offer,
+      isChecked: checkedOffersIds.includes(offer.id)
+    }));
+  }
 }
 
 export default OffersModel;

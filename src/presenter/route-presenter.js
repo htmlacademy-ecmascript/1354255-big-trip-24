@@ -73,7 +73,6 @@ class RoutePresenter {
     this.#currentFilter = this.#filtersModel.filter;
 
     const filteredPoints = filter[this.#currentFilter](points);
-
     return sortPointsByType(filteredPoints, this.#currentSort);
   }
 
@@ -118,6 +117,7 @@ class RoutePresenter {
       offersModel: this.#offersModel,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
+      onCloseNewPoint: this.#handleCloseNewPoint
     });
 
     pointPresenter.init(point);
@@ -253,6 +253,8 @@ class RoutePresenter {
         break;
     }
   };
+
+  #handleCloseNewPoint = () => this.#addNewPointPresenter.destroy();
 
   #addPointDestroyHandler = () => {
     this.#isCreatingPoint = false;

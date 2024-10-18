@@ -23,19 +23,22 @@ class PointPresenter {
 
   #handleDataChange = null;
   #handleModeChange = null;
+  #handleNewPointClose = null;
 
   constructor({
     pointListContainer,
     destinationsModel,
     offersModel,
     onDataChange,
-    onModeChange
+    onModeChange,
+    onCloseNewPoint
   }) {
     this.#pointListContainer = pointListContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#handleNewPointClose = onCloseNewPoint;
   }
 
   init(point) {
@@ -46,6 +49,8 @@ class PointPresenter {
 
     this.#pointComponent = new PointItemView({
       point: this.#point,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
       onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
@@ -138,6 +143,7 @@ class PointPresenter {
   };
 
   #handleEditClick = () => {
+    this.#handleNewPointClose();
     this.#replacePointToForm();
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };

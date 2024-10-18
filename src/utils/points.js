@@ -109,12 +109,6 @@ const createOfferSlug = (title) => title
   .slice(0, 2)
   .join('-');
 
-const getCheckedOffers = (allOffers, checkedOffersIds) =>
-  allOffers.map((offer) => ({
-    ...offer,
-    isChecked: checkedOffersIds.includes(offer.id)
-  }));
-
 const getOffersCost = (offers) => offers.reduce((acc, offer) => {
   if (offer.isChecked) {
     acc += offer.price;
@@ -126,7 +120,6 @@ export {
   createOfferSlug,
   DateTimeFormat,
   formatDate,
-  getCheckedOffers,
   getOffersCost,
   getTimeDifference,
   isFuturePoint,

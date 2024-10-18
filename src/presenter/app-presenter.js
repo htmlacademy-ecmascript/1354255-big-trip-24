@@ -1,4 +1,3 @@
-import PointsAdapter from '@/adapter/points-adapter';
 import DestinationsModel from '@/model/destinations-model';
 import FiltersModel from '@/model/filters-model';
 import OffersModel from '@/model/offers-model';
@@ -13,25 +12,16 @@ import PointsApiService from '@/service/points-api-service';
 
 import { AUTHORIZATION, END_POINT } from '@/utils';
 
+const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION);
 const destinationsApiService = new DestinationsApiService(END_POINT, AUTHORIZATION);
 const offersApiService = new OffersApiService(END_POINT, AUTHORIZATION);
 
+const filtersModel = new FiltersModel();
 const destinationsModel = new DestinationsModel(destinationsApiService);
 const offersModel = new OffersModel(offersApiService);
-
-const pointsAdapter = new PointsAdapter({
-  destinationsModel,
-  offersModel
-});
-
-const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION, pointsAdapter);
-
 const routeModel = new RouteModel({
   service: pointsApiService,
-  adapter: pointsAdapter
 });
-
-const filtersModel = new FiltersModel();
 
 const addPointButtonPresenter = new AddPointButtonPresenter();
 

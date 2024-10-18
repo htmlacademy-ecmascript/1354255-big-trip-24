@@ -1,5 +1,7 @@
 import Observable from '@/framework/observable';
 
+import PointsAdapter from '@/adapter/points-adapter';
+
 import {
   deleteItem,
   PointErrorMessage,
@@ -12,12 +14,10 @@ class RouteModel extends Observable {
   #points = [];
 
   #service = null;
-  #adapter = null;
 
-  constructor({ service, adapter }) {
+  constructor({ service }) {
     super();
     this.#service = service;
-    this.#adapter = adapter;
   }
 
   get points() {
@@ -27,7 +27,7 @@ class RouteModel extends Observable {
   async init() {
     try {
       const points = await this.#service.points;
-      this.#points = points.map(this.#adapter.adaptToClient);
+      this.#points = points.map(PointsAdapter.adaptToClient);
 
       this._notify(UpdateType.INIT);
     } catch(err) {
@@ -47,7 +47,7 @@ class RouteModel extends Observable {
 
     try {
       const response = await this.#service.updatePoint(updatedPoint);
-      const adaptedPoint = this.#adapter.adaptToClient(response);
+      const adaptedPoint = PointsAdapter.adaptToClient(response);
 
       this.#points = updateItem(this.#points, updatedPoint, index);
 
@@ -60,7 +60,7 @@ class RouteModel extends Observable {
   async addPoint(updateType, point) {
     try {
       const response = await this.#service.addPoint(point);
-      const newPoint = this.#adapter.adaptToClient(response);
+      const newPoint = PointsAdapter.adaptToClient(response);
 
       this.#points = [newPoint, ...this.#points];
 
