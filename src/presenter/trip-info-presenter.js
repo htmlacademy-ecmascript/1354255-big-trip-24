@@ -59,6 +59,8 @@ class TripInfoPresenter {
   }
 
   init() {
+    this.destroy();
+
     if (!this.#points.length) {
       return;
     }

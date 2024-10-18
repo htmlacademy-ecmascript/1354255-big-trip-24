@@ -165,11 +165,16 @@ class RoutePresenter {
   #clearRoute(resetSortType = false) {
     this.#clearPointList();
     this.#clearSort();
+    this.#clearNewPointForm();
     remove(this.#emptyPointListComponent);
 
     if (resetSortType) {
       this.#currentSort = Sort.DAY;
     }
+  }
+
+  #clearNewPointForm() {
+    this.#addNewPointPresenter.destroy();
   }
 
   #handleModeChange = () => {
@@ -254,7 +259,7 @@ class RoutePresenter {
     }
   };
 
-  #handleCloseNewPoint = () => this.#addNewPointPresenter.destroy();
+  #handleCloseNewPoint = () => this.#clearNewPointForm();
 
   #addPointDestroyHandler = () => {
     this.#isCreatingPoint = false;
