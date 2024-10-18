@@ -8,6 +8,7 @@ import {
   ELLIPSES_SYMBOL,
   sortPointsByType,
   Sort,
+  sortByLastDate,
   formatDate,
   getOffersCost,
   SEPARATOR_SYMBOL
@@ -32,21 +33,33 @@ class TripInfoPresenter {
     return sortPointsByType(this.#routeModel.points, Sort.DAY);
   }
 
+  get #startPoint() {
+    return this.#points.at(0);
+  }
+
+  get #endPoint() {
+    return this.#points.toSorted(sortByLastDate).at(0);
+  }
+
   get #route() {
     const destinationNames = this.#points
       .map((point) => this.#destinationsModel.getDestinationById(point.destination)?.name)
       .filter(Boolean);
 
     const route = destinationNames.length > DESTINATIONS_TO_SHOW
-      ? [destinationNames.at(0), ELLIPSES_SYMBOL, destinationNames.at(-1)]
+      ? [
+        this.#destinationsModel.getDestinationById(this.#startPoint.destination)?.name,
+        ELLIPSES_SYMBOL,
+        this.#destinationsModel.getDestinationById(this.#endPoint.destination)?.name,
+      ]
       : destinationNames;
 
     return route.join(SEPARATOR_SYMBOL);
   }
 
   get #duration() {
-    const startDate = formatDate(this.#points.at(0).dateFrom, DateTimeFormat.TRIP);
-    const endDate = formatDate(this.#points.at(-1).dateTo, DateTimeFormat.TRIP);
+    const startDate = formatDate(this.#startPoint.dateFrom, DateTimeFormat.TRIP);
+    const endDate = formatDate(this.#endPoint.dateTo, DateTimeFormat.TRIP);
 
     return `${startDate}${SEPARATOR_SYMBOL}${endDate}`;
   }
@@ -59,8 +72,6 @@ class TripInfoPresenter {
   }
 
   init() {
-    this.destroy();
-
     if (!this.#points.length) {
       return;
     }

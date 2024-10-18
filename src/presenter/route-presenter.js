@@ -4,6 +4,7 @@ import UiBlocker from '@/framework/ui-blocker/ui-blocker';
 import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
 import SortPresenter from '@/presenter/sort-presenter';
+import TripInfoPresenter from '@/presenter/trip-info-presenter';
 import MessageView from '@/view/message-view';
 import PointListView from '@/view/point-view/point-list-view';
 
@@ -48,6 +49,7 @@ class RoutePresenter {
   #pointPresenters = new Map();
   #addNewPointPresenter = null;
   #addPointButtonPresenter = null;
+  #tripInfoPresenter = null;
 
   constructor({
     routeModel,
@@ -108,6 +110,7 @@ class RoutePresenter {
 
     this.#renderSort();
     this.#renderPointList();
+    this.#renderTripInfo();
   }
 
   #renderPoint(point) {
@@ -153,6 +156,16 @@ class RoutePresenter {
     render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
+  #renderTripInfo() {
+    this.#tripInfoPresenter = new TripInfoPresenter({
+      routeModel: this.#routeModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel
+    });
+
+    this.#tripInfoPresenter.init();
+  }
+
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
@@ -166,6 +179,7 @@ class RoutePresenter {
     this.#clearPointList();
     this.#clearSort();
     this.#clearNewPointForm();
+    this.#clearTripInfo();
     remove(this.#emptyPointListComponent);
 
     if (resetSortType) {
@@ -175,6 +189,10 @@ class RoutePresenter {
 
   #clearNewPointForm() {
     this.#addNewPointPresenter.destroy();
+  }
+
+  #clearTripInfo() {
+    this.#tripInfoPresenter?.destroy();
   }
 
   #handleModeChange = () => {

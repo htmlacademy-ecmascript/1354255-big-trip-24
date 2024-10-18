@@ -5,7 +5,6 @@ import RouteModel from '@/model/route-model';
 import AddPointButtonPresenter from '@/presenter/add-point-button-presenter';
 import FiltersPresenter from '@/presenter/filters-presenter';
 import RoutePresenter from '@/presenter/route-presenter';
-import TripInfoPresenter from '@/presenter/trip-info-presenter';
 import DestinationsApiService from '@/service/destinations-api-service';
 import OffersApiService from '@/service/offers-api-service';
 import PointsApiService from '@/service/points-api-service';
@@ -38,12 +37,6 @@ const routePresenter = new RoutePresenter({
   addPointButtonPresenter
 });
 
-const tripInfoPresenter = new TripInfoPresenter({
-  routeModel,
-  destinationsModel,
-  offersModel
-});
-
 class AppPresenter {
   init() {
     filtersPresenter.init();
@@ -61,8 +54,6 @@ class AppPresenter {
           onButtonClick: routePresenter.addPointButtonClickHandler
         });
       });
-
-    tripInfoPresenter.init();
   }
 }
 

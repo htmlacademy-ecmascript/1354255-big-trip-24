@@ -36,7 +36,7 @@ const getTimeDifference = (dateFrom, dateTo) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
   const daysInYear = Math.floor(dayjs.duration(diff).asDays());
 
-  if (dayjs.duration(diff).years()) {
+  if (dayjs.duration(diff).years() || dayjs.duration(diff).months()) {
     return `${daysInYear}D ${dayjs.duration(diff).format(DateTimeFormat.HOURS_DURATION)}`;
   }
 
@@ -78,6 +78,8 @@ function getWeightForNullDate(dateA, dateB) {
 }
 
 const sortByDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+
+const sortByLastDate = (pointA, pointB) => dayjs(pointB.dateTo).diff(dayjs(pointA.dateTo));
 
 const sortByTime = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
@@ -128,4 +130,5 @@ export {
   parseDate,
   pointMode,
   sortPointsByType,
+  sortByLastDate
 };

@@ -154,8 +154,6 @@ class PointPresenter {
       UpdateType.MINOR,
       point,
     );
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleCloseClick = () => {
