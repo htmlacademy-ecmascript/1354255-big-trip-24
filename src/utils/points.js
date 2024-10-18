@@ -34,6 +34,11 @@ const formatDate = (date, format = DateTimeFormat.DEFAULT) => date ? dayjs(date)
 
 const getTimeDifference = (dateFrom, dateTo) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
+  const daysInYear = Math.floor(dayjs.duration(diff).asDays());
+
+  if (dayjs.duration(diff).years()) {
+    return `${daysInYear}D ${dayjs.duration(diff).format(DateTimeFormat.HOURS_DURATION)}`;
+  }
 
   if (diff >= MSECONDS_IN_DAY) {
     return dayjs.duration(diff).format(DateTimeFormat.DAYS_DURATION);
