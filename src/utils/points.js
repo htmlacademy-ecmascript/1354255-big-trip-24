@@ -34,6 +34,11 @@ const formatDate = (date, format = DateTimeFormat.DEFAULT) => date ? dayjs(date)
 
 const getTimeDifference = (dateFrom, dateTo) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
+  const daysInYear = Math.floor(dayjs.duration(diff).asDays());
+
+  if (dayjs.duration(diff).years() || dayjs.duration(diff).months()) {
+    return `${daysInYear}D ${dayjs.duration(diff).format(DateTimeFormat.HOURS_DURATION)}`;
+  }
 
   if (diff >= MSECONDS_IN_DAY) {
     return dayjs.duration(diff).format(DateTimeFormat.DAYS_DURATION);
@@ -48,12 +53,13 @@ const getTimeDifference = (dateFrom, dateTo) => {
   }
 };
 
-const isFuturePoint = ({ dateFrom }) => dayjs().isBefore(dateFrom, 'minute');
+const isFuturePoint = ({ dateFrom }) => dayjs(dateFrom).isAfter(dayjs(), 'D');
 
-const isPresentPoint = ({ dateTo }) => dayjs(dateTo) && dayjs().isAfter(dayjs(dateTo), 'millisecond');
+const isPresentPoint = ({ dateFrom, dateTo }) =>
+  (dayjs(dateFrom).isBefore(dayjs(), 'D') || dayjs(dateFrom).isSame(dayjs(), 'D'))
+  && (dayjs(dateTo).isAfter(dayjs(), 'D') || dayjs(dateTo).isSame(dayjs(), 'D'));
 
-const isPastPoint = ({ dateFrom, dateTo }) =>
-  dateTo && (dayjs().isSame(dayjs(dateFrom), 'minute') || dayjs().isAfter(dateTo, 'minute'));
+const isPastPoint = ({ dateTo }) => dayjs(dateTo).isBefore(dayjs(), 'D');
 
 function getWeightForNullDate(dateA, dateB) {
   if (dateA === null && dateB === null) {
@@ -71,10 +77,16 @@ function getWeightForNullDate(dateA, dateB) {
   return null;
 }
 
+const sortByDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+
+const sortByLastDate = (pointA, pointB) => dayjs(pointB.dateTo).diff(dayjs(pointA.dateTo));
+
 const sortByTime = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
+  const pointADuration = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+  const pointBDuration = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
 
-  return weight ?? dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
+  return weight ?? pointBDuration - pointADuration;
 };
 
 const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
@@ -86,7 +98,7 @@ const sortPointsByType = (points, sortType) => {
     case Sort.PRICE:
       return points.toSorted(sortByPrice);
     default:
-      return [...points];
+      return points.toSorted(sortByDate);
   }
 };
 
@@ -99,12 +111,6 @@ const createOfferSlug = (title) => title
   .slice(0, 2)
   .join('-');
 
-const getCheckedOffers = (allOffers, checkedOffersIds) =>
-  allOffers.map((offer) => ({
-    ...offer,
-    isChecked: checkedOffersIds.includes(offer.id)
-  }));
-
 const getOffersCost = (offers) => offers.reduce((acc, offer) => {
   if (offer.isChecked) {
     acc += offer.price;
@@ -116,7 +122,6 @@ export {
   createOfferSlug,
   DateTimeFormat,
   formatDate,
-  getCheckedOffers,
   getOffersCost,
   getTimeDifference,
   isFuturePoint,
@@ -124,7 +129,6 @@ export {
   isPresentPoint,
   parseDate,
   pointMode,
-  sortByPrice,
-  sortByTime,
-  sortPointsByType
+  sortPointsByType,
+  sortByLastDate
 };

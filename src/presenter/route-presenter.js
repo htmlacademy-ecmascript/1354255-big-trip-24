@@ -4,6 +4,7 @@ import UiBlocker from '@/framework/ui-blocker/ui-blocker';
 import AddNewPointPresenter from '@/presenter/add-new-point-presenter';
 import PointPresenter from '@/presenter/point-presenter';
 import SortPresenter from '@/presenter/sort-presenter';
+import TripInfoPresenter from '@/presenter/trip-info-presenter';
 import MessageView from '@/view/message-view';
 import PointListView from '@/view/point-view/point-list-view';
 
@@ -28,6 +29,7 @@ class RoutePresenter {
   #currentFilter = FilterType.EVERYTHING;
   #isLoading = true;
   #error = null;
+  #isCreatingPoint = false;
 
   #routeModel = null;
   #destinationsModel = null;
@@ -35,8 +37,8 @@ class RoutePresenter {
   #filtersModel = null;
 
   #contentContainer = null;
+  #emptyPointListComponent = null;
   #pointListComponent = new PointListView();
-  #emptyPointListComponent = new MessageView(MessageOnLoading.EMPTY_ROUTE);
   #loadingComponent = new MessageView(MessageOnLoading.LOADING);
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -47,6 +49,7 @@ class RoutePresenter {
   #pointPresenters = new Map();
   #addNewPointPresenter = null;
   #addPointButtonPresenter = null;
+  #tripInfoPresenter = null;
 
   constructor({
     routeModel,
@@ -72,7 +75,6 @@ class RoutePresenter {
     this.#currentFilter = this.#filtersModel.filter;
 
     const filteredPoints = filter[this.#currentFilter](points);
-
     return sortPointsByType(filteredPoints, this.#currentSort);
   }
 
@@ -89,6 +91,7 @@ class RoutePresenter {
   }
 
   addPointButtonClickHandler = () => {
+    this.#isCreatingPoint = true;
     this.#filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#addPointButtonPresenter.disableButton();
     this.#addNewPointPresenter.init();
@@ -100,13 +103,14 @@ class RoutePresenter {
       return;
     }
 
-    if(this.points.length === 0) {
+    if (this.points.length === 0 && !this.#isCreatingPoint) {
       this.#renderEmptyPointList();
       return;
     }
 
     this.#renderSort();
     this.#renderPointList();
+    this.#renderTripInfo();
   }
 
   #renderPoint(point) {
@@ -116,6 +120,7 @@ class RoutePresenter {
       offersModel: this.#offersModel,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
+      onCloseNewPoint: this.#handleCloseNewPoint
     });
 
     pointPresenter.init(point);
@@ -151,23 +156,43 @@ class RoutePresenter {
     render(errorComponent, this.#contentContainer, RenderPosition.AFTERBEGIN);
   }
 
+  #renderTripInfo() {
+    this.#tripInfoPresenter = new TripInfoPresenter({
+      routeModel: this.#routeModel,
+      offersModel: this.#offersModel,
+      destinationsModel: this.#destinationsModel
+    });
+
+    this.#tripInfoPresenter.init();
+  }
+
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }
 
   #clearSort() {
-    this.#sortPresenter.destroy();
+    this.#sortPresenter?.destroy();
   }
 
   #clearRoute(resetSortType = false) {
     this.#clearPointList();
     this.#clearSort();
+    this.#clearNewPointForm();
+    this.#clearTripInfo();
     remove(this.#emptyPointListComponent);
 
     if (resetSortType) {
       this.#currentSort = Sort.DAY;
     }
+  }
+
+  #clearNewPointForm() {
+    this.#addNewPointPresenter.destroy();
+  }
+
+  #clearTripInfo() {
+    this.#tripInfoPresenter?.destroy();
   }
 
   #handleModeChange = () => {
@@ -252,8 +277,16 @@ class RoutePresenter {
     }
   };
 
+  #handleCloseNewPoint = () => this.#clearNewPointForm();
+
   #addPointDestroyHandler = () => {
+    this.#isCreatingPoint = false;
     this.#addPointButtonPresenter.enableButton();
+
+    if (this.points.length === 0) {
+      this.#clearRoute();
+      this.#renderRoute();
+    }
   };
 }
 

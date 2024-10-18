@@ -43,10 +43,11 @@ class PointFormView extends AbstractStatefulView {
     onResetClick
   }) {
     super();
-    this._setState(PointFormView.parsePointToState(point));
-
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
+
+    this._setState(this.#parsePointToState(point));
+
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCloseClick = onCloseClick;
     this.#handleResetClick = onResetClick;
@@ -76,7 +77,7 @@ class PointFormView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      PointFormView.parsePointToState(point),
+      this.#parsePointToState(point),
     );
   }
 
@@ -91,7 +92,7 @@ class PointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationSelectHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceInputHandler);
-    this.element.addEventListener('change', this.#offersListHandler);
+    this.element.querySelector('.event__available-offers')?.addEventListener('click', this.#offersListHandler);
 
     if (this.#mode === pointMode.EDIT) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
@@ -134,24 +135,27 @@ class PointFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(PointFormView.parseStateToPoint(this._state));
+    this.#handleFormSubmit(this.#parseStateToPoint(this._state));
   };
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleCloseClick(PointFormView.parseStateToPoint(this._state));
+    this.#handleCloseClick(this.#parseStateToPoint(this._state));
   };
 
   #resetClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleResetClick(PointFormView.parseStateToPoint(this._state));
+    this.#handleResetClick(this.#parseStateToPoint(this._state));
   };
 
   #pointTypeSelectHandler = (evt) => {
     evt.preventDefault();
 
     const type = evt.target.value;
-    const offers = this.#offersModel.getOffersByPointType(type);
+    const offers = this.#offersModel.getOffersByPointType(type).map((offer) => ({
+      ...offer,
+      isChecked: false
+    }));
 
     this.updateElement({
       ...this._state,
@@ -213,8 +217,10 @@ class PointFormView extends AbstractStatefulView {
       return;
     }
 
+    const inputElement = evt.target.closest('.event__offer-selector').firstElementChild;
+
     const offers = this._state.offers.map((offer) => {
-      if (offer.id === evt.target.id) {
+      if (offer.id === inputElement.id) {
         return { ...offer, isChecked: !offer.isChecked };
       }
 
@@ -227,9 +233,11 @@ class PointFormView extends AbstractStatefulView {
     });
   };
 
-  static parsePointToState(point) {
+  #parsePointToState(point) {
     return {
       ...point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers: this.#offersModel.getCheckedOffers(point),
       selectedType: point.type,
       isDisabled: false,
       isSaving: false,
@@ -237,8 +245,12 @@ class PointFormView extends AbstractStatefulView {
     };
   }
 
-  static parseStateToPoint(state) {
-    const point = { ...state };
+  #parseStateToPoint(state) {
+    const point = {
+      ...state,
+      destination: state.destination?.id,
+      offers: state.offers.filter((offer) => offer.isChecked).map((offer) => offer.id)
+    };
 
     delete point.selectedType;
     delete point.isDisabled;

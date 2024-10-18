@@ -4,12 +4,25 @@ import { createTemplate } from './create-template';
 class PointItemView extends AbstractView {
   #point = null;
 
+  #offersModel = null;
+  #destinationsModel = null;
+
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({ point, onEditClick, onFavoriteClick }) {
+  constructor({
+    point,
+    offersModel,
+    destinationsModel,
+    onEditClick,
+    onFavoriteClick
+  }) {
     super();
-    this.#point = point;
+    this.#offersModel = offersModel;
+    this.#destinationsModel = destinationsModel;
+
+    this.#point = this.#normalizePoint(point);
+
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
 
@@ -22,6 +35,14 @@ class PointItemView extends AbstractView {
 
   get template() {
     return createTemplate(this.#point);
+  }
+
+  #normalizePoint(point) {
+    return {
+      ...point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers: this.#offersModel.getCheckedOffers(point),
+    };
   }
 
   #editClickHandler = (evt) => {
