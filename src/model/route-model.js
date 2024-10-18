@@ -33,7 +33,7 @@ class RouteModel extends Observable {
     } catch(err) {
       this.#points = [];
 
-      this._notify(UpdateType.ERROR, err);
+      this._notify(UpdateType.ERROR, MessageOnLoading.FAILED);
       throw new Error(MessageOnLoading.FAILED);
     }
   }
