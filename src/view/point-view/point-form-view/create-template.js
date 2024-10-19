@@ -226,8 +226,9 @@ const createTemplate = (state, availableDestinations, mode) => {
   } = state;
 
   return (
-    `<form class="event event--edit" action="#" method="post">
-      ${createHeaderTemplate({
+    `<li class="trip-events__item">
+      <form class="event event--edit" action="#" method="post">
+        ${createHeaderTemplate({
       basePrice,
       dateFrom,
       dateTo,
@@ -240,13 +241,14 @@ const createTemplate = (state, availableDestinations, mode) => {
       isDeleting,
       isDisabled
     })}
-      <section class="event__details">
-        ${createOffersSectionTemplate(offers)}
-        ${destination?.description
+        <section class="event__details">
+          ${createOffersSectionTemplate(offers)}
+          ${destination?.description
       ? createDestinationSectionTemplate(destination.description, destination.pictures)
       : ''}
-      </section>
-    </form>`
+        </section>
+      </form>
+    </li>`
   );
 };
 
