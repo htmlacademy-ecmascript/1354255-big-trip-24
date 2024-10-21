@@ -5,7 +5,7 @@ import SortView from '@/view/sort-view';
 import { Sort } from '@/utils';
 
 class SortPresenter {
-  #sort = [];
+  #sortTypes = [];
 
   #container = null;
   #sortComponent = null;
@@ -13,7 +13,7 @@ class SortPresenter {
   #sortTypesChangeHandler = null;
 
   constructor({ container, currentSort, onSortTypeChange }) {
-    this.#sort = Object.values(Sort).map((sortType) => ({
+    this.#sortTypes = Object.values(Sort).map((sortType) => ({
       type: sortType,
       isChecked: sortType === currentSort
     }));
@@ -25,7 +25,7 @@ class SortPresenter {
     const prevSortComponent = this.#sortComponent;
 
     this.#sortComponent = new SortView({
-      items: this.#sort,
+      items: this.#sortTypes,
       onItemChange: this.#sortTypesChangeHandler,
     });
 
