@@ -33,7 +33,7 @@ class RouteModel extends Observable {
     } catch(err) {
       this.#points = [];
 
-      this._notify(UpdateType.ERROR, MessageOnLoading.FAILED);
+      this.showError();
       throw new Error(MessageOnLoading.FAILED);
     }
   }
@@ -86,6 +86,10 @@ class RouteModel extends Observable {
     } catch(err) {
       throw new Error(PointErrorMessage.DELETE);
     }
+  }
+
+  showError() {
+    this._notify(UpdateType.ERROR, MessageOnLoading.FAILED);
   }
 }
 

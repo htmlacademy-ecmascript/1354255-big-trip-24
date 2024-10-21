@@ -49,6 +49,9 @@ class AppPresenter {
       .then(() => {
         routeModel.init();
       })
+      .catch(() => {
+        routeModel.showError();
+      })
       .finally(() => {
         addPointButtonPresenter.init({
           onButtonClick: routePresenter.addPointButtonClickHandler
